@@ -15,6 +15,7 @@
 - import_playbook: upload-ssh-github.yml
 - import_playbook: copy-cf-origin-ssl.yml
 - import_playbook: copy-nginx-config.yml
+
 # CLONE REPOS
 # hosts: all
 - import_playbook: create-app-dir.yml
@@ -25,6 +26,7 @@
 - import_playbook: install-nodejs-lts.yml # install nodejs on boxes that need it
   # install postgres on rs-dba & create dbs & allow connections on network
   # important to do this so front canrs push schemas
+
 - import_playbook: install-postgres-and-dbs.yml
 # ts-web
 - import_playbook: setup-web.yml
@@ -48,15 +50,9 @@
 - import_playbook: copy-arrow-files.yml
 # Decoupled start script becuae we need to have files first
 - import_playbook: start-streamer.yml
-# - import_playbook: iptables/web.yml
-# - import_playbook: iptables/dba.yml
-# - import_playbook: iptables/str.yml
-# - import_playbook: update-dns.yml
-# FOR THAT WE NEED ADD KEYS FROM dba -> str
-# - import_playbook: ssh-exchange.yml
-# - import_playbook: pg2arrow.yml
-# - import_playbook: setup-rs-streamer.yml
-#
-# - import_playbook: setup-cf.yml
-#
-# optionally run xy to copy a sql dump to db
+
+# setup iptables
+- import_playbook: setup-iptables-log.yml
+- import_playbook: iptables-web.yml
+- import_playbook: iptables-dba.yml
+- import_playbook: iptables-str.yml

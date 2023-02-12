@@ -2,7 +2,7 @@
 - name: Install Netdata
   hosts: all
   vars_files:
-    - "../../vars/netdata.yml"
+    - "../vars/netdata.yml"
   become: true
   become_method: sudo
 

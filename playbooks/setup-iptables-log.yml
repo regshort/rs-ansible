@@ -3,7 +3,8 @@
   hosts: all
   gather_facts: false
   vars_files:
-    - "../../vars/index.yml"
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
 
   tasks:
     - name: create iptables.log
@@ -17,8 +18,10 @@
       ansible.builtin.lineinfile:
         path: /etc/rsyslog.d/50-default.conf
         line: :msg,contains,"[iptables] " /var/log/iptables.log
+      become: true
 
     - name: restart rsyslog
       ansible.builtin.systemd:
         name: rsyslog
         state: restarted
+      become: true

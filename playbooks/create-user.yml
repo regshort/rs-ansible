@@ -4,8 +4,8 @@
   gather_facts: false
   remote_user: root
   vars_files:
-    - "../../vars/index.yml"
-    - "../../vars/sensitive.yml"
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
 
   vars:
     new_password: "{{ username }}-{{ inventory_hostname.split('-')[1] }}{{ password_seed }}"

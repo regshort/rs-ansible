@@ -1,4 +1,4 @@
 dbs/*
 *.log
 ssh/*
-
+vault_pass.tx

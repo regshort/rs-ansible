@@ -1,4 +1,10 @@
 ---
+# - name: Iptables flush filter
+#   ansible.builtin.iptables:
+#     chain: "{{ item }}"
+#     flush: yes
+#   become: true
+#   with_items: ["INPUT", "FORWARD", "OUTPUT"]
 - name: Allow packets from internal network to reach external network.
   ansible.builtin.iptables:
     comment: "Allow packets from internal network to reach external network."

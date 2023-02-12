@@ -3,7 +3,7 @@
   hosts: rs-dba
   gather_facts: false
   vars_files:
-    - "../../vars/index.yml"
+    - "../vars/index.yml"
   vars:
     repo_name: rs-pg2arrow
   remote_user: "{{ username }}"

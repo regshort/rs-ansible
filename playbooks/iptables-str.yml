@@ -20,26 +20,7 @@
         interface: "en+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/incoming-http.yml
-      vars:
-        interface: "en+"
-        jump: "ACCEPT"
-
-    - include_tasks: tasks/iptables/outgoing-http.yml
-      vars:
-        interface: "en+"
-        jump: "ACCEPT"
-
-    - include_tasks: tasks/iptables/incoming-https.yml
-      vars:
-        interface: "en+"
-        jump: "ACCEPT"
-
-    - include_tasks: tasks/iptables/outgoing-https.yml
-      vars:
-        interface: "en+"
-        jump: "ACCEPT"
-
+    # EXTERNAL
     - include_tasks: tasks/iptables/outgoing-postgres.yml
       vars:
         interface: "en+"

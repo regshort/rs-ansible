@@ -3,8 +3,8 @@
   hosts: localhost
   gather_facts: false
   vars_files:
-    - "../../vars/index.yml"
-    - "../../vars/sensitive.yml"
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
   # first create a new network to use
   # then create all server on that network
   tasks:
