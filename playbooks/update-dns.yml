@@ -1,0 +1,67 @@
+---
+- name: update dns
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
+  remote_user: "{{ username }}"
+  strategy: free
+  tasks:
+    - name: create dns for www.regshort.com
+      community.general.cloudflare_dns:
+        zone: "{{ root_dns }}"
+        type: CNAME
+        record: www
+        value: "{{ root_dns }}"
+        proxied: true
+        api_token: "{{ cloudflare_api_token }}"
+
+    - name: create dns for status
+      community.general.cloudflare_dns:
+        zone: "{{ root_dns }}"
+        type: CNAME
+        record: status
+        value: statuspage.betteruptime.com
+        proxied: false
+        api_token: "{{ cloudflare_api_token }}"
+
+    - name: create dns for regshort.com
+      community.general.cloudflare_dns:
+        zone: "{{ root_dns }}"
+        record: "{{ root_dns }}"
+        type: A
+        value: "{{ hostvars['rs-web'].ansible_host }}"
+        api_token: "{{ cloudflare_api_token }}"
+        solo: true
+        proxied: true
+
+    - name: create dns for docs.regshort.com
+      community.general.cloudflare_dns:
+        zone: "{{ root_dns }}"
+        record: "{{ docs_subdomain }}"
+        type: A
+        value: "{{ hostvars['rs-web'].ansible_host }}"
+        api_token: "{{ cloudflare_api_token }}"
+        solo: true
+        proxied: true
+
+    - name: create dns for terminal.regshort.com
+      community.general.cloudflare_dns:
+        zone: "{{ root_dns }}"
+        record: "{{ terminal_subdomain }}"
+        type: A
+        value: "{{ hostvars['rs-web'].ansible_host }}"
+        api_token: "{{ cloudflare_api_token }}"
+        solo: true
+        proxied: true
+
+    - name: create dns for ws.regshort.com
+      community.general.cloudflare_dns:
+        zone: "{{ root_dns }}"
+        record: "{{ streamer_subdomain }}"
+        type: A
+        value: "{{ hostvars['rs-str'].ansible_host }}"
+        api_token: "{{ cloudflare_api_token }}"
+        solo: true
+        proxied: true

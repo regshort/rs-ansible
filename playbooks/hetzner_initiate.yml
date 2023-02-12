@@ -1,0 +1,3 @@
+---
+- import_playbook: add-ssh-hetzner.yml
+- import_playbook: create-server-hetzner.yml

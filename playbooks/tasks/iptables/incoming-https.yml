@@ -1,0 +1,29 @@
+---
+- name: Allow ALL incoming https
+  ansible.builtin.iptables:
+    comment: "Allow ALL incoming https"
+    chain: INPUT
+    in_interface: "{{ interface }}"
+    protocol: tcp
+    destination_port: 443
+    match:
+      - state
+      - tcp
+    ctstate:
+      - NEW
+      - ESTABLISHED
+    jump: "{{ jump }}"
+
+- name: Allow ALL incoming https
+  ansible.builtin.iptables:
+    comment: "Allow ALL incoming https"
+    chain: OUTPUT
+    out_interface: "{{ interface }}"
+    protocol: tcp
+    source_port: 443
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+    jump: "{{ jump }}"

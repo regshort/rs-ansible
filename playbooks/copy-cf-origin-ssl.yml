@@ -1,0 +1,23 @@
+---
+- name: Copy cf origin ssl
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  strategy: free
+
+  tasks:
+    - name: copy ssl cert
+      become: true
+      template:
+        mode: 0644
+        src: "../ssl/certs/cert.pem"
+        dest: /etc/ssl/certs/cert.pem
+
+    - name: copy ssl key
+      become: true
+      template:
+        mode: 0644
+        src: "../ssl/private/key.pem"
+        dest: /etc/ssl/private/key.pem

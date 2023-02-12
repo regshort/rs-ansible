@@ -1,0 +1,30 @@
+---
+- name: add node_env
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
+  strategy: free
+
+  tasks:
+    - name: add env
+      lineinfile:
+        path: ~/.bash_profile
+        line: HCLOUD_TOKEN="{{ hetzner_api_token }}"
+        regexp: "^HCLOUD_TOKEN="
+
+    - name: source file
+      ansible.builtin.shell:
+        chdir: "~"
+        cmd: source .bash_profile
+      args:
+        executable: /bin/bash
+      register: sourceresult
+
+    - name: source .bash_profile
+      ansible.builtin.command:
+        cmd: echo $HCLOUD_TOKEN
+      register: tokenprint
+
+    - debug: var="tokenprint"

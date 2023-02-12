@@ -1,0 +1,32 @@
+---
+- name: Change Hostnames
+  hosts: "all"
+  gather_facts: true
+  remote_user: root
+  vars:
+    new_hostname: "{{ inventory_hostname }}{{ ansible_default_ipv4.address.split('.')[-1] }}"
+  strategy: free
+  tasks:
+    - name: Save old Hostname
+      set_fact:
+        old_hostname: "{{ ansible_fqdn }}"
+    - name: "Configure hostname"
+      ansible.builtin.hostname:
+        name: "{{ new_hostname }}"
+      become: true
+
+    - name: restart machine
+      reboot:
+        reboot_timeout: 3600
+
+    - name: Fix /etc/hosts removing the old hostname
+      ansible.builtin.replace:
+        path: /etc/hosts
+        regexp: '(\s+){{ old_hostname }}(\s+.*)?$'
+        replace: '\1{{ new_hostname }}\2'
+
+    - name: Validate ansible_fqdn == new_hostname
+      tags:
+        - validate
+      assert:
+        that: ansible_fqdn == new_hostname

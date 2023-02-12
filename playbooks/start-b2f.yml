@@ -1,0 +1,19 @@
+---
+- name: run b2f
+  hosts: rs-dba
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  vars:
+    repo_name: rs-b2f
+  remote_user: "{{ username }}"
+  strategy: free
+  tasks:
+    - name: run b2f
+      ansible.builtin.command:
+        chdir: "{{ [app_dir, repo_name] | path_join }}"
+        cmd: "ts-node b2f.ts"
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/usr/local/lib/npm/bin"
+      register: mymotd
+      changed_when: mymotd.rc != 0

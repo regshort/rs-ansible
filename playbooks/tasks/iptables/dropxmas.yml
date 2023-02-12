@@ -1,0 +1,16 @@
+---
+- name: Drop XMAS packets
+  ansible.builtin.iptables:
+    comment: "Drop XMAS packets"
+    chain: INPUT
+    protocol: tcp
+    match:
+      - tcp
+    tcp_flags:
+      flags: ALL
+      flags_set:
+        - ACK
+        - RST
+        - SYN
+        - FIN
+    jump: DROP

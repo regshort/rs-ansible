@@ -1,0 +1,53 @@
+---
+- name: copy nginx config
+  hosts: rs-web, rs-str
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  strategy: free
+  tasks:
+    - name: Update apt cache and install Nginx
+      become: true
+      apt:
+        name: nginx
+        state: present
+
+    #### if streamer we need to add websocket config to nginx for now we add it to all because i don't think its bad
+    - name: add websocket thingy to config
+      ansible.builtin.blockinfile:
+        path: /etc/nginx/nginx.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        insertafter: "http {"
+        block: |
+          map $http_upgrade $connection_upgrade {
+              default upgrade;
+              ''      close;
+          }
+      become: true
+
+    - name: Copy each file over that matches the given pattern
+      become: true
+      template:
+        mode: 0644
+        src: "{{ item }}"
+        dest: /etc/nginx/sites-available/{{ item | basename }}
+      with_fileglob:
+        - "../nginx/{{ inventory_hostname }}/*"
+
+    - name: Enable configs
+      become: true
+      file:
+        src: /etc/nginx/sites-available/{{ item | basename }}
+        dest: /etc/nginx/sites-enabled/{{ item | basename }}
+        state: link
+      with_fileglob:
+        - "../nginx/{{ inventory_hostname }}/*"
+      notify: Restart Nginx
+
+  handlers:
+    - name: Restart Nginx
+      become: true
+      service:
+        name: nginx
+        state: restarted

@@ -1,0 +1,54 @@
+---
+- name: Allow packets from internal network to reach external network.
+  ansible.builtin.iptables:
+    comment: "Allow packets from internal network to reach external network."
+    chain: FORWARD
+    in_interface: "ens10"
+    out_interface: "eth0"
+    jump: ACCEPT
+
+- name: Allow loopback access in
+  ansible.builtin.iptables:
+    comment: "Allow loopback access in"
+    chain: INPUT
+    in_interface: "lo"
+    jump: ACCEPT
+
+- name: Allow loopback out
+  ansible.builtin.iptables:
+    comment: "Allow loopback out"
+    chain: OUTPUT
+    out_interface: "lo"
+    jump: ACCEPT
+
+- name: Ping from inside to outside
+  ansible.builtin.iptables:
+    comment: "Ping from inside to outside"
+    protocol: icmp
+    icmp_type: echo-request
+    chain: OUTPUT
+    jump: ACCEPT
+
+- name: Ping from inside to outside
+  ansible.builtin.iptables:
+    comment: "Ping from inside to outside"
+    protocol: icmp
+    icmp_type: echo-reply
+    chain: INPUT
+    jump: ACCEPT
+
+- name: Ping from outside to inside
+  ansible.builtin.iptables:
+    comment: "Ping from outside to inside"
+    protocol: icmp
+    icmp_type: echo-request
+    chain: INPUT
+    jump: ACCEPT
+
+- name: Ping from outside to inside
+  ansible.builtin.iptables:
+    comment: "Ping from outside to inside"
+    protocol: icmp
+    icmp_type: echo-reply
+    chain: OUTPUT
+    jump: ACCEPT

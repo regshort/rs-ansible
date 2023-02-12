@@ -1,0 +1,59 @@
+---
+- name: restore db
+  hosts: rs-dba
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  strategy: free
+  tasks:
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: /var/lib/postgresql/{{ item | basename }}
+        mode: "0755"
+      become: true
+      with_fileglob:
+        - "../dbs/*"
+
+    - name: restore dbs
+      postgresql_db:
+        state: restore
+        name: "{{ username }}{{ item | basename }}"
+        target: /var/lib/postgresql/{{ item | basename }}
+      become: true
+      become_user: postgres
+      with_fileglob:
+        - "../dbs/*"
+
+    - name: "Grant db user access to app db"
+      postgresql_privs:
+        type: database
+        database: "{{ username }}{{ item | basename }}"
+        roles: "{{ username }}"
+        privs: all
+      become: true
+      become_user: postgres
+      with_fileglob:
+        - "../dbs/*"
+    # GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO regshort;
+
+    - name: Ensure we have access from the new user
+      postgresql_privs:
+        db: "{{ username }}{{ item | basename }}"
+        privs: SELECT,INSERT,UPDATE,DELETE
+        objs: ALL_IN_SCHEMA
+        schema: public
+        roles: regshort
+      become: yes
+      become_user: postgres
+      with_fileglob:
+        - "../dbs/*"
+
+    - name: delete files dbs
+      ansible.builtin.file:
+        path: /var/lib/postgresql/{{ item | basename }}
+        state: absent
+      become: true
+      with_fileglob:
+        - "../dbs/*"

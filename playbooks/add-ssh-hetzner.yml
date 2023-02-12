@@ -1,0 +1,21 @@
+---
+- name: add ssh hetzner
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
+  strategy: free
+  tasks:
+    - name: Ensure the ssh_key is absent (remove if needed)
+      hcloud_ssh_key:
+        name: "{{ hetzner_deploy_sshkey }}"
+        state: absent
+        api_token: "{{ hetzner_api_token }}"
+
+    - name: Create a basic ssh_key
+      hcloud_ssh_key:
+        name: "{{ hetzner_deploy_sshkey }}"
+        public_key: "{{ lookup('file', '../ssh/id_rsa.pub') }}"
+        state: present
+        api_token: "{{ hetzner_api_token }}"

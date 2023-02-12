@@ -1,0 +1,12 @@
+---
+- name: Create ssh
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  remote_user: "{{ username }}"
+  strategy: free
+  tasks:
+    - name: create ssh
+      community.crypto.openssh_keypair:
+        path: ~/.ssh/id_rsa

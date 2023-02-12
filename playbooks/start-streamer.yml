@@ -1,0 +1,19 @@
+---
+- name: start streamer
+  hosts: rs-str
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  remote_user: "{{ username }}"
+  vars:
+    repo_name: rs-streamer
+  strategy: free
+  tasks:
+    - name: Run pm2 streamer
+      ansible.builtin.command:
+        cmd: /usr/local/lib/npm/bin/pm2 start app/server_starlette_stream.py --name ws --interpreter python3
+        chdir: "{{ [app_dir, repo_name] | path_join }}"
+      args:
+      become: false
+      register: mymotd2
+      changed_when: mymotd2.rc != 0

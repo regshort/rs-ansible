@@ -1,0 +1,12 @@
+---
+- name: dba
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/nodejs.yml"
+  remote_user: "{{ username }}"
+  become: true
+  strategy: free
+  roles:
+    - geerlingguy.nodejs

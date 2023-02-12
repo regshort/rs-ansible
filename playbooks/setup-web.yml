@@ -1,0 +1,26 @@
+---
+- name: setup web
+  hosts: rs-web
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  vars:
+    repo_name: rs-web
+  remote_user: "{{ username }}"
+  tasks:
+    - name: Install {{ repo_name }}
+      community.general.npm:
+        path: "{{ [app_dir, repo_name] | path_join }}"
+      become: false
+
+    - name: Install web package.json
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} npm run build
+      become: false
+      register: mymotd
+      changed_when: mymotd.rc != 0
+
+    - name: Run pm2
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} /usr/local/lib/npm/bin/pm2 start npm --name 'web' -- run serve
+      become: false
+      register: mymotd2
+      changed_when: mymotd2.rc != 0

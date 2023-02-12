@@ -1,0 +1,87 @@
+---
+- name: setup back
+  hosts: rs-dba
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  vars:
+    repo_name: rs-back
+  remote_user: "{{ username }}"
+  tasks:
+    - name: Install pip3 packages
+      ansible.builtin.apt:
+        name:
+          - python3-pip
+          - python3-venv
+        state: present
+      become: true
+
+    - name: Install back python requirements
+      ansible.builtin.pip:
+        requirements: "{{ [app_dir, repo_name] | path_join }}/requirements.txt"
+
+    - name: setup .venv
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} python3 -m venv .venv
+      register: mymotd1
+      changed_when: mymotd1.rc != 0
+
+    - name: source env
+      ansible.builtin.shell:
+        chdir: "{{ [app_dir, repo_name] | path_join }}"
+        cmd: source .venv/bin/activate
+      args:
+        executable: /bin/bash
+      register: myoutput
+      changed_when: myoutput.rc != 0
+
+    # - name: source .venv
+    #   ansible.builtin.command: chdir="{{ [app_dir, repo_name] | path_join }}" source .venv/bin/activate
+    #   become: no
+    #   register: mymotd2
+    #   changed_when: mymotd2.rc != 0
+
+    - name: Install a few python package
+      ansible.builtin.pip:
+        name:
+          - pytz
+          - yahooquery
+          - wheel
+          - pandas_market_calendars
+          - sqlalchemy
+          - prisma
+
+    - name: Creates directory
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0755
+      loop:
+        - "{{ [app_dir, repo_name] | path_join }}/input/yahoo_finance/daily"
+        - "{{ [app_dir, repo_name] | path_join }}/input/nasdaq/delistings"
+        - "{{ [app_dir, repo_name] | path_join }}/input/merged/trading_day"
+        - "{{ [app_dir, repo_name] | path_join }}/logs"
+
+    - name: create .env
+      copy:
+        mode: 0600
+        dest: "{{ [app_dir, repo_name] | path_join }}/.env"
+        content: |
+          DB_URL="postgresql://{{ username }}:{{ username }}@{{ hostvars["rs-dba"].private_ipv4 }}:5432/{{ username }}back"
+          DB_PROVIDER="prisma-client-py"
+          WORKING_DIR="{{ [app_dir, repo_name] | path_join }}"
+
+    - name: generte prisma client
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} prisma generate
+      remote_user: "{{ username }}"
+      register: myoutput
+      changed_when: myoutput.rc != 0
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/home/regshort/.local/bin"
+
+    - name: push schema
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} prisma migrate deploy
+      remote_user: "{{ username }}"
+      register: myoutput
+      changed_when: myoutput.rc != 0
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/home/regshort/.local/bin"

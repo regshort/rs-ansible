@@ -1,0 +1,29 @@
+---
+- name: outgoing postgres
+  ansible.builtin.iptables:
+    comment: "outgoing postgres"
+    chain: OUTPUT
+    out_interface: "{{ interface }}"
+    protocol: tcp
+    destination_port: 5432
+    match:
+      - state
+      - tcp
+    ctstate:
+      - NEW
+      - ESTABLISHED
+    jump: "{{ jump }}"
+
+- name: outgoing postgres
+  ansible.builtin.iptables:
+    comment: "outgoing postgres"
+    chain: INPUT
+    in_interface: "{{ interface }}"
+    protocol: tcp
+    source_port: 5432
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+    jump: "{{ jump }}"

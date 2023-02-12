@@ -1,0 +1,78 @@
+---
+- name: initiate ip tables
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  remote_user: "{{ username }}"
+  become: true
+  tasks:
+    - name: Iptables flush filter
+      ansible.builtin.iptables:
+        chain: "{{ item }}"
+        flush: yes
+      become: true
+      with_items: ["INPUT", "FORWARD", "OUTPUT"]
+
+    # - name: set default chain policies INPUT
+    #   ansible.builtin.iptables:
+    #     chain: INPUT
+    #     policy: DROP
+    #   become: true
+
+    # - name: set default chain policies FORWARD
+    #   ansible.builtin.iptables:
+    #     chain: FORWARD
+    #     policy: DROP
+
+    # - name: set default chain policies OUTPUT
+    #   ansible.builtin.iptables:
+    #     chain: OUTPUT
+    #     policy: DROP
+
+    - name: Allow packets from internal network to reach external network.
+      ansible.builtin.iptables:
+        chain: FORWARD
+        in_interface: "ens10"
+        out_interface: "eth0"
+        jump: ACCEPT
+
+    - name: Allow loopback access in
+      ansible.builtin.iptables:
+        chain: INPUT
+        in_interface: "lo"
+        jump: ACCEPT
+
+    - name: Allow loopback out
+      ansible.builtin.iptables:
+        chain: INPUT
+        out_interface: "lo"
+        jump: ACCEPT
+
+    - name: Ping from inside to outside
+      ansible.builtin.iptables:
+        protocol: icmp
+        icmp_type: echo-request
+        chain: OUTPUT
+        jump: ACCEPT
+
+    - name: Ping from inside to outside
+      ansible.builtin.iptables:
+        protocol: icmp
+        icmp_type: echo-reply
+        chain: INPUT
+        jump: ACCEPT
+
+    - name: Ping from outside to inside
+      ansible.builtin.iptables:
+        protocol: icmp
+        icmp_type: echo-request
+        chain: INPUT
+        jump: ACCEPT
+
+    - name: Ping from outside to inside
+      ansible.builtin.iptables:
+        protocol: icmp
+        icmp_type: echo-reply
+        chain: OUTPUT
+        jump: ACCEPT

@@ -1,0 +1,24 @@
+---
+- name: setup iptables log
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+
+  tasks:
+    - name: create iptables.log
+      ansible.builtin.file:
+        path: /var/log/iptables.log
+        state: touch
+        mode: "0640"
+      become: true
+
+    - name: add iptables logging
+      ansible.builtin.lineinfile:
+        path: /etc/rsyslog.d/50-default.conf
+        line: :msg,contains,"[iptables] " /var/log/iptables.log
+
+    - name: restart rsyslog
+      ansible.builtin.systemd:
+        name: rsyslog
+        state: restarted

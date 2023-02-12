@@ -1,0 +1,33 @@
+---
+- name: debug
+  hosts: all
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: root
+
+  tasks:
+    # cannot find good info online on how to change interfaces with ansible so i won't do it for now
+    # - name: Rename external interface
+    #   command: "ip link set {{ item }} name eth1"
+    #   loop: "{{ ansible_interfaces }}"
+    #   when: item is match('^et')
+    #   become: true
+
+    # - name: Rename internal interface
+    #   command: "ip link set {{ item }} name ens20"
+    #   loop: "{{ ansible_interfaces }}"
+    #   when: item is match('^en')
+    #   become: true
+
+    # This will only retrieve information
+    - name: get current state of the firewall
+      community.general.iptables_state:
+        state: saved
+        path: /tmp/iptables
+      check_mode: true
+      changed_when: false
+      register: iptables_state
+
+    - name: show current state of the firewall
+      ansible.builtin.debug:
+        var: iptables_state.initial_state

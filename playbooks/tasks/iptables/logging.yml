@@ -1,0 +1,27 @@
+---
+- name: Create LOGGING chain
+  ansible.builtin.iptables:
+    comment: "Create LOGGING chain"
+    chain: LOGGING
+    chain_management: true
+
+- name: set input to logging idk
+  ansible.builtin.iptables:
+    comment: "set input to logging idk"
+    chain: INPUT
+    jump: LOGGING
+
+- name: set logging idk 
+  ansible.builtin.iptables:
+    comment: "set logging idk "
+    chain: LOGGING
+    limit: 2/min
+    jump: LOG
+    log_prefix: "[iptables] DROP: "
+    log_level: "7"
+
+- name: set drop to logging
+  ansible.builtin.iptables:
+    comment: "set drop to logging"
+    chain: LOGGING
+    jump: DROP

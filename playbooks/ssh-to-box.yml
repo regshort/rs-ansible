@@ -1,0 +1,17 @@
+---
+- name: Copying ssh key and updating sudoers
+  hosts: all
+  vars_files:
+    - "../vars/index.yml"
+
+  gather_facts: false
+  become: true
+  remote_user: "root"
+  strategy: free
+
+  tasks:
+    - name: Copy SSh Key | copying shh key to remote host
+      authorized_key:
+        user: "{{ username }}"
+        state: present
+        key: "{{ lookup('file', '../ssh/id_rsa.pub') }}"

@@ -1,0 +1,17 @@
+---
+- name: Copying ssh key from dba to runner then to str
+  hosts: rs-str
+  vars_files:
+    - "../vars/index.yml"
+  gather_facts: false
+  remote_user: "{{ username }}"
+  strategy: free
+
+  tasks:
+    - name: Copy SSh Key | copying shh key to remote host
+      authorized_key:
+        user: "{{ username }}"
+        state: present
+        key: "{{ lookup('file', item) }}"
+      with_fileglob:
+        - "../buffer/rs-dba-id_rsa.pub"

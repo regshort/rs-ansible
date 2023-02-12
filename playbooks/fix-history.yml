@@ -1,0 +1,16 @@
+---
+- name: Fix history
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  strategy: free
+  tasks:
+    - name: Fix history
+      blockinfile:
+        path: /home/{{ username }}/.bashrc
+        block: |
+          export HISTTIMEFORMAT="%F %T "
+          shopt -s histappend
+          PROMPT_COMMAND="history -a;$PROMPT_COMMAND"

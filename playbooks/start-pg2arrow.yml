@@ -1,0 +1,23 @@
+---
+- name: run pg2arrow
+  hosts: rs-dba
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  vars:
+    repo_name: rs-pg2arrow
+  remote_user: "{{ username }}"
+  strategy: free
+  tasks:
+    # run pg2arrow on dba to create arrow files
+    - name: run pg2arrow
+      ansible.builtin.command:
+        chdir: "{{ [app_dir, repo_name] | path_join }}"
+        cmd: "python3 pg2arrow.py"
+
+    # - name: execute pg2arrow script
+    #   command:
+    #     cmd: python3 pg2arrow.py
+    #     chdir: "{{ [app_dir, repo_name] | path_join }}"
+    #   register: myoutput
+    #   changed_when: myoutput.rc != 0

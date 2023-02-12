@@ -1,0 +1,7 @@
+---
+- name: Drop Fragmented packets
+  ansible.builtin.iptables:
+    comment: "Drop Fragmented packets"
+    chain: INPUT
+    flush: yes
+    jump: DROP

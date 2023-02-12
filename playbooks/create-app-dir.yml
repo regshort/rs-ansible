@@ -1,0 +1,16 @@
+---
+- name: create app dir
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  remote_user: "{{ username }}"
+  strategy: free
+  tasks:
+    - name: Create /git
+      ansible.builtin.file:
+        path: /git
+        state: directory
+        mode: "0755"
+        owner: "{{ username }}"
+      become: true

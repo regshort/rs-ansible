@@ -1,0 +1,14 @@
+---
+- name: Prevent TCP-basedDoS attack
+  ansible.builtin.iptables:
+    comment: "Prevent TCP-basedDoS attack"
+    chain: INPUT
+    protocol: tcp
+    match:
+      - tcp
+    limit: "{{ limit }}"
+    limit_burst: "{{ limit_burst }}"
+    destination_port: 443
+    jump: "{{ jump }}"
+
+

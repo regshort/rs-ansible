@@ -1,0 +1,56 @@
+---
+# APP SETTINGS
+app_dir: /git
+username: regshort
+root_dns: regshort.com
+terminal_subdomain: terminal
+docs_subdomain: docs
+streamer_subdomain: ws
+database_to_make: # this will add the username before it {{ username }}{{ db }}
+  - front
+  - back
+
+# HETZNER deploy settings
+hetzner_network_ip_range: 10.0.0.0/16
+hetzner_network_ip_subnet: 10.0.0.0/24
+hetzner_deploy_sshkey: ansible@runner
+
+hosts_to_make:
+  rs-web:
+    server_type: cpx11
+    image: ubuntu-22.04
+    location: nbg1-dc3
+    repos:
+      - rs-web
+      - rs-docs
+      - rs-terminal
+    iptables:
+      incoming-ssh:
+      - eth+
+      - ACCEPT
+  rs-dba:
+    server_type: cx21
+    image: ubuntu-22.04
+    location: nbg1-dc3
+    repos:
+      - rs-back
+      - rs-b2f
+      - rs-pg2arrow
+    iptables:
+      incoming-ssh:
+      - eth+
+      - ACCEPT
+  rs-str:
+    server_type: ccx11
+    image: ubuntu-22.04
+    location: nbg1-dc3
+    repos:
+      - rs-streamer
+    iptables:
+      incoming-ssh:
+        - eth+
+        - ACCEPT
+      outgoing-ssh:
+        - eth+
+        - ACCEPT
+

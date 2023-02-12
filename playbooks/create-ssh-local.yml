@@ -1,0 +1,19 @@
+---
+- name: create ssh local
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Creates directory
+      file:
+        path: "../../ssh"
+        state: directory
+        mode: 0700
+
+    - name: create ssh
+      community.crypto.openssh_keypair:
+        path: "../../ssh/id_rsa"
+        force: true

@@ -1,0 +1,17 @@
+---
+- name: copy arrow files
+  hosts: rs-dba
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  strategy: free
+  vars:
+    pg2arrow_repo: rs-pg2arrow
+    streamer_repo: rs-streamer
+  tasks:
+    - name: copy arrow files from dba to str
+      ansible.builtin.shell:
+        cmd: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa {{ [app_dir, pg2arrow_repo] | path_join }}/*.arrow {{ username }}@{{ hostvars['rs-str'].private_ipv4 }}:{{ [app_dir, streamer_repo] | path_join }}/app/.
+      register: scp_return
+      changed_when: scp_return.rc != 0

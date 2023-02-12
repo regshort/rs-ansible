@@ -1,0 +1,53 @@
+---
+- name: add iptables for rs-web
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  remote_user: "root"
+  become: true
+  # hetzner_network_ip_subnet
+  tasks:
+    # INTERNAL
+    - include_tasks: tasks/initiate.yml
+    - include_tasks: tasks/incoming-ssh.yml
+      vars:
+        interface: "en+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/outgoing-ssh.yml
+      vars:
+        interface: "en+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/postgres-subnet-port.yml
+      vars:
+        port: 3000
+        subnet: "{{ hetzner_network_ip_subnet }}"
+        interface: "en+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/incoming-http.yml
+      vars:
+        interface: "en+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/outgoing-http.yml
+      vars:
+        interface: "en+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/incoming-https.yml
+      vars:
+        interface: "en+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/outgoing-https.yml
+      vars:
+        interface: "en+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/outgoing-postgres.yml
+      vars:
+        interface: "en+"
+        jump: "ACCEPT"

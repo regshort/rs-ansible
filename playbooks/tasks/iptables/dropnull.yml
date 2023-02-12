@@ -1,0 +1,17 @@
+---
+- name: Drop null packets
+  ansible.builtin.iptables:
+    comment: "Drop null packets"
+    chain: INPUT
+    # in_interface: "{{ interface }}"
+    protocol: tcp
+    match:
+      - tcp
+    tcp_flags:
+      flags: NONE
+      flags_set:
+        - ACK
+        - RST
+        - SYN
+        - FIN
+    jump: DROP

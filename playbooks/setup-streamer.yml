@@ -1,0 +1,36 @@
+---
+- name: setup streamer
+  hosts: rs-str
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  remote_user: "{{ username }}"
+  vars:
+    repo_name: rs-streamer
+  tasks:
+    - name: Install pip3 packages
+      ansible.builtin.apt:
+        name:
+          - python3-pip
+        state: present
+      become: true
+
+    - name: Install {{ repo_name }} python requirements
+      ansible.builtin.pip:
+        requirements: "{{ [app_dir, repo_name] | path_join }}/requirements.txt"
+
+    - name: Install a few python package
+      ansible.builtin.pip:
+        name:
+          - starlette
+          - python-jose
+          - fastapi
+          - perspective-python
+          - wheel
+
+    - name: Install postgres packages
+      ansible.builtin.apt:
+        name:
+          - uvicorn
+        state: present
+      become: true

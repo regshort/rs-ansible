@@ -1,0 +1,62 @@
+---
+- name: setup terminal
+  hosts: rs-web
+  gather_facts: false
+  vars_files:
+    - "../../vars/index.yml"
+  vars:
+    repo_name: rs-terminal
+  remote_user: "{{ username }}"
+  tasks:
+    - name: copy env
+      ansible.builtin.copy:
+        mode: 0600
+        src: "{{ [app_dir, repo_name] | path_join }}/.env.production"
+        dest: "{{ [app_dir, repo_name] | path_join }}/.env"
+        remote_src: true
+    - name: Remove file production
+      ansible.builtin.file:
+        path: "{{ [app_dir, repo_name] | path_join }}/.env.production"
+        state: absent
+
+    - name: Remove file development
+      ansible.builtin.file:
+        path: "{{ [app_dir, repo_name] | path_join }}/.env.development"
+        state: absent
+
+    - name: set DATABASE_URL in .env
+      lineinfile:
+        path: "{{ [app_dir, repo_name] | path_join }}/.env"
+        regexp: "^DATABASE_URL="
+        line: 'DATABASE_URL="postgresql://{{ username }}:{{ username }}@{{ hostvars["rs-dba"].private_ipv4 }}:5432/{{ username }}front"'
+
+    - name: Install {{ repo_name }}
+      community.general.yarn:
+        executable: /usr/local/lib/npm/bin/yarn
+        path: "{{ [app_dir, repo_name] | path_join }}"
+      become: false
+
+    - name: build terminal
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} /usr/local/lib/npm/bin/yarn build
+      become: false
+      register: mymotd
+      changed_when: mymotd.rc != 0
+
+    - name: generte prisma client
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} npx -y prisma generate
+      register: myoutput1
+      changed_when: myoutput1.rc != 0
+
+    - name: push schema
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} npx -y prisma db push # this should be migrate deploy but does not work
+      register: myoutput2
+      changed_when: myoutput2.rc != 0
+
+    - name: debug migrate deploy
+      debug: var=myoutput2
+
+    - name: Run pm2
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} /usr/local/lib/npm/bin/pm2 start npm --name 'terminal' -- run start
+      become: false
+      register: mymotd2
+      changed_when: mymotd2.rc != 0

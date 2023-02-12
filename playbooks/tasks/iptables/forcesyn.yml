@@ -1,0 +1,11 @@
+---
+- name: Force SYN packet check
+  ansible.builtin.iptables:
+    comment: "Force SYN packet check"
+    chain: INPUT
+    protocol: tcp
+    match:
+      - state
+    ctstate:
+      - NEW
+    jump: DROP

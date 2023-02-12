@@ -1,0 +1,19 @@
+---
+- name: set default chain policies INPUT
+  ansible.builtin.iptables:
+    comment: "set default chain policies INPUT"
+    chain: INPUT
+    policy: DROP
+  become: true
+
+- name: set default chain policies FORWARD
+  ansible.builtin.iptables:
+    comment: "set default chain policies FORWARD"
+    chain: FORWARD
+    policy: DROP
+
+- name: set default chain policies OUTPUT
+  ansible.builtin.iptables:
+    comment: "set default chain policies OUTPUT"
+    chain: OUTPUT
+    policy: DROP
