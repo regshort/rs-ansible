@@ -50,7 +50,6 @@
 - import_playbook: copy-arrow-files.yml
 # Decoupled start script becuae we need to have files first
 - import_playbook: start-streamer.yml
-
 # setup iptables
 - import_playbook: setup-iptables-log.yml
 - import_playbook: iptables-web.yml

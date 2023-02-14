@@ -37,8 +37,8 @@
     - include_tasks: tasks/iptables/tcp-dos.yml
       vars:
         jump: "ACCEPT"
-        limit: 100/min
-        limit_burst: 200
+        limit: 500/min
+        limit_burst: 1000
     - include_tasks: tasks/iptables/dropnull.yml
     # - include_tasks: tasks/iptables/dropfragmented.yml
     # - include_tasks: tasks/iptables/forcesyn.yml

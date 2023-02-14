@@ -32,7 +32,7 @@ ssh-add "$key_file"
 
 # run server creation we need to split playbooks because of inventory 
 $ansible_cmd playbooks/hetzner_initiate.yml --vault-password-file=vault_pass.txt
-sleep 20
+sleep 30
 # this is the main playbook doing stuff on server
 $ansible_cmd playbooks/initiate.yml --vault-password-file=vault_pass.txt
 

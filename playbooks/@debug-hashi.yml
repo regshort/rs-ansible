@@ -1,0 +1,28 @@
+---
+- name: NAME
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    # - name: Read a kv2 secret with the default mount point
+    #   ansible.builtin.set_fact:
+    #     response: "{{ lookup('hashi_vault', 'secret=database/data/postgres token=dev-only-token url=http://localhost:8200') }}"
+    #   # equivalent API path in 3.x.x is kv/data/hello
+    #   # equivalent API path in 4.0.0+ is secret/data/hello
+    # - name: print
+    #   debug: var=response
+    - name: Generate a certificate with an existing token
+      community.hashi_vault.vault_pki_generate_certificate:
+        role_name: test.example.org
+        common_name: test.example.org
+        ttl: 8760h
+        alt_names:
+          - test2.example.org
+          - test3.example.org
+        url: http://localhost:8200
+        auth_method: token
+        token: dev-only-token
+      register: cert_data
