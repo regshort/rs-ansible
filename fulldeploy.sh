@@ -10,7 +10,7 @@ else
   ansible_cmd="ansible-playbook"
 fi
 # ssh key to add
-key_file=ansible/ssh/id_rsa 
+key_file=ssh/id_rsa 
 # ask for vault pw
 if [ -z "$HCLOUD_TOKEN" ]; then
   echo "Error: HCLOUD_TOKEN environment variable is not set."
@@ -21,7 +21,7 @@ read -s password
 # temp write to read it in ansible
 echo $password > vault_pass.txt
 # add hcloud token to running user env
-# ansible-playbook -v ansible/playbooks/setup-enviroment-variables-local.yml --vault-password-file=vault_pass.txt
+# ansible-playbook -v playbooks/setup-enviroment-variables-local.yml --vault-password-file=vault_pass.txt
 
 # create local ssh keys
 $ansible_cmd playbooks/create-ssh-local.yml
@@ -35,6 +35,7 @@ $ansible_cmd playbooks/hetzner_initiate.yml --vault-password-file=vault_pass.txt
 sleep 30
 # this is the main playbook doing stuff on server
 $ansible_cmd playbooks/initiate.yml --vault-password-file=vault_pass.txt
+# $ansible_cmd -i inventory/todelete/hcloud.yml playbooks/remove-servers-hetzner.yml --vault-password-file=vault_pass.txt
 
 echo "Do you want to update Cloudflare DNS (yes/no) [yes]?"
 read -r answer

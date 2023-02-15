@@ -1,0 +1,3 @@
+plugin: hcloud
+network: "default"
+label_selector: running

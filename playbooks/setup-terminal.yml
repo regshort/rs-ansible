@@ -11,18 +11,18 @@
     - name: copy env
       ansible.builtin.copy:
         mode: 0600
-        src: "{{ [app_dir, repo_name] | path_join }}/.env.production"
+        src: "{{ [app_dir, repo_name] | path_join }}/.env.production.local"
         dest: "{{ [app_dir, repo_name] | path_join }}/.env"
         remote_src: true
     - name: Remove file production
       ansible.builtin.file:
-        path: "{{ [app_dir, repo_name] | path_join }}/.env.production"
+        path: "{{ [app_dir, repo_name] | path_join }}/.env.production.local"
         state: absent
 
-    - name: Remove file development
-      ansible.builtin.file:
-        path: "{{ [app_dir, repo_name] | path_join }}/.env.development"
-        state: absent
+    # - name: Remove file development
+    #   ansible.builtin.file:
+    #     path: "{{ [app_dir, repo_name] | path_join }}/.env.development"
+    #     state: absent
 
     - name: set DATABASE_URL in .env
       lineinfile:
@@ -51,9 +51,6 @@
       ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} npx -y prisma db push # this should be migrate deploy but does not work
       register: myoutput2
       changed_when: myoutput2.rc != 0
-
-    - name: debug migrate deploy
-      debug: var=myoutput2
 
     - name: Run pm2
       ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} /usr/local/lib/npm/bin/pm2 start npm --name 'terminal' -- run start

@@ -1,0 +1,21 @@
+---
+- name: Create Network & servers
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
+  remote_user: "{{ username }}"
+  # first create a new network to use
+  # then create all server on that network
+  tasks:
+    - name: remove old servers
+      hcloud_server:
+        id: "{{ item.value.id  }}"
+        state: absent
+        api_token: "{{ hetzner_api_token }}"
+      async: 1000
+      poll: 0
+      loop: "{{ hostvars | dict2items }}"
+      when: item.value.labels.todelete == "true"
+      # here we could wait for ssh of the server to start before finish. this would make wait-for-ssh.yml useless

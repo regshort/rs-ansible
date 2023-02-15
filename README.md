@@ -43,7 +43,7 @@ This project uses `ansible-vault` to encrypt our variables the password is saved
 - **setup a project on [hetzner cloud](https://console.hetzner.cloud/projects)**
 
   - make an api key for the project. (`hetzner_api_token`)
-  - add the ssh key from this repo `ansible/playbooks/ssh/id_rsa.pub` to the project.
+  - add the ssh key from this repo `ssh/id_rsa.pub` to the project.
 
 - Setup github user access token
 

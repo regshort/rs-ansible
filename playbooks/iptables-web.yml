@@ -53,11 +53,11 @@
       vars:
         interface: "et+"
         jump: "ACCEPT"
-    - include_tasks: tasks/iptables/tcp-dos.yml
-      vars:
-        jump: "ACCEPT"
-        limit: 500/min
-        limit_burst: 1000
+    # - include_tasks: tasks/iptables/tcp-dos.yml
+    #   vars:
+    #     jump: "ACCEPT"
+    #     limit: 10/sec
+    #     limit_burst: 100
     - include_tasks: tasks/iptables/dropnull.yml
     # - include_tasks: tasks/iptables/dropfragmented.yml
     # - include_tasks: tasks/iptables/forcesyn.yml

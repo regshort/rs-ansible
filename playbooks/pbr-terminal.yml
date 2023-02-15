@@ -1,0 +1,35 @@
+---
+- name: pbr (pull build restart) terminal
+  hosts: rs-web
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  vars:
+    repo_name: rs-terminal
+  tasks:
+    - name: pull from git
+      git:
+        repo: git@github.com:regshort/{{ repo_name }}.git
+        dest: "{{ [app_dir, repo_name] | path_join }}"
+        update: true
+        version: main
+        force: true
+
+    - name: Install {{ repo_name }}
+      community.general.yarn:
+        executable: /usr/local/lib/npm/bin/yarn
+        path: "{{ [app_dir, repo_name] | path_join }}"
+      become: false
+
+    - name: build terminal
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} /usr/local/lib/npm/bin/yarn build
+      become: false
+      register: mymotd
+      changed_when: mymotd.rc != 0
+
+    - name: restart pm2
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} /usr/local/lib/npm/bin/pm2 restart terminal
+      become: false
+      register: mymotd2
+      changed_when: mymotd2.rc != 0
