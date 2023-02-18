@@ -1,6 +1,6 @@
 ---
-- name: add iptables for rs-web
-  hosts: rs-web
+- name: add iptables for rs-dba
+  hosts: rs-dba
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
@@ -56,10 +56,10 @@
     #     jump: "ACCEPT"
     #     limit: 100/min
     #     limit_burst: 100
-    - include_tasks: tasks/iptables/dropnull.yml
+    #- include_tasks: tasks/iptables/dropnull.yml
     # - include_tasks: tasks/iptables/dropfragmented.yml
     # - include_tasks: tasks/iptables/forcesyn.yml
-    - include_tasks: tasks/iptables/dropxmas.yml
+    #- include_tasks: tasks/iptables/dropxmas.yml
     - include_tasks: tasks/iptables/logging.yml
     - include_tasks: tasks/iptables/chain-policies.yml
     - include_tasks: tasks/iptables/incoming-http.yml
