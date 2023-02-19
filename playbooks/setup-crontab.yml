@@ -53,7 +53,7 @@
         name: "pg2arrow.py"
         minute: "30"
         hour: "07"
-        job: "scp -i ~/.ssh/rsa_id /git/{{ pg2arrow_repo }}/*.arrow {{ username }}@{{ str_priv }}:/git/{{ streamer_repo }}/."
+        job: "scp -i ~/.ssh/id_rsa /git/{{ pg2arrow_repo }}/*.arrow {{ username }}@{{ str_priv }}:/git/{{ streamer_repo }}/app/."
 
     - name: 00 08 * * * cd /git/{{ b2f_repo }}/ && /home/{{ username }}/.nvm/versions/node/*/bin/ts-node b2fSecs.ts
       ansible.builtin.cron:

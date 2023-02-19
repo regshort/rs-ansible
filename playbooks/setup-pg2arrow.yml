@@ -22,6 +22,23 @@
       ansible.builtin.pip:
         requirements: "{{ [app_dir, repo_name] | path_join }}/requirements.txt"
 
+    - name: copy env
+      ansible.builtin.copy:
+        mode: 0600
+        src: "{{ [app_dir, repo_name] | path_join }}/.env.example"
+        dest: "{{ [app_dir, repo_name] | path_join }}/.env"
+        remote_src: true
+
+    - name: Remove file production
+      ansible.builtin.file:
+        path: "{{ [app_dir, repo_name] | path_join }}/.env.example"
+        state: absent
+
+    # - name: Remove file development
+    #   ansible.builtin.file:
+    #     path: "{{ [app_dir, repo_name] | path_join }}/.env.development"
+    #     state: absent
+
     - name: set DATABASE_URL in .env
       lineinfile:
         path: "{{ [app_dir, repo_name] | path_join }}/.env"

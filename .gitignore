@@ -2,3 +2,4 @@ dbs/*
 *.log
 ssh/*
 vault_pass.txt
+buffer/*
