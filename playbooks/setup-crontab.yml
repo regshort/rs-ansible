@@ -1,6 +1,6 @@
 ---
-- name: NAME
-  hosts: rs-dba
+- name: setup crontab
+  hosts: rs-dba*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
@@ -10,6 +10,7 @@
     pg2arrow_repo: rs-pg2arrow
     streamer_repo: rs-streamer
     b2f_repo: rs-b2f
+    str_priv: "{{ groups['all'] | select('match', '^rs-str') | map('extract', hostvars, ['private_ipv4']) | list | first }}"
 
   tasks:
     - name: 05 22 * * * /git/{{ back_repo }}/.venv/bin/python3 /git/{{ back_repo }}/app/download_data.py
@@ -47,12 +48,12 @@
         hour: "07"
         job: "python3 /git/{{ pg2arrow_repo }}/pg2arrow.py"
 
-    - name: 45 07 * * * scp -i ~/.ssh/id_rsa /git/{{ pg2arrow_repo }}/*.arrow {{ username }}@{{ hostvars["rs-str"].private_ipv4 }}:/git/{{ streamer_repo }}/.
+    - name: 45 07 * * * scp -i ~/.ssh/id_rsa /git/{{ pg2arrow_repo }}/*.arrow {{ username }}@{{ str_priv }}:/git/{{ streamer_repo }}/.
       ansible.builtin.cron:
         name: "pg2arrow.py"
         minute: "30"
         hour: "07"
-        job: "scp -i ~/.ssh/rsa_id /git/{{ pg2arrow_repo }}/*.arrow {{ username }}@{{ hostvars['rs-str'].private_ipv4 }}:/git/{{ streamer_repo }}/."
+        job: "scp -i ~/.ssh/rsa_id /git/{{ pg2arrow_repo }}/*.arrow {{ username }}@{{ str_priv }}:/git/{{ streamer_repo }}/."
 
     - name: 00 08 * * * cd /git/{{ b2f_repo }}/ && /home/{{ username }}/.nvm/versions/node/*/bin/ts-node b2fSecs.ts
       ansible.builtin.cron:

@@ -1,6 +1,6 @@
 ---
 - name: Copying ssh key from dba to runner then to str
-  hosts: rs-dba
+  hosts: rs-dba*
   vars_files:
     - "../vars/index.yml"
   gather_facts: false
@@ -11,5 +11,5 @@
     - name: copy keys to runner
       fetch:
         src: "~/.ssh/id_rsa.pub"
-        dest: "../buffer/{{ inventory_hostname }}-id_rsa.pub"
+        dest: "../buffer/{{ inventory_hostname | regex_replace('^([^-]+-[^-]+).*', '\\1') }}-id_rsa.pub"
         flat: yes

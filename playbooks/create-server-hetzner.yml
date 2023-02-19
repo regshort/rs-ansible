@@ -10,26 +10,26 @@
   # first create a new network to use
   # then create all server on that network
   tasks:
-    - name: remove network
-      hcloud_network:
-        name: "default"
-        state: absent
-        api_token: "{{ hetzner_api_token }}"
+    # - name: remove network
+    #   hcloud_network:
+    #     name: "default"
+    #     state: absent
+    #     api_token: "{{ hetzner_api_token }}"
 
-    - name: remove all boxes
-      hcloud_server:
-        name: "{{ item.key  }}"
-        state: absent
-        api_token: "{{ hetzner_api_token }}"
-      async: 1000
-      poll: 0
-      with_dict: "{{ hosts_to_make }}"
-    # - name: add old tag to old servers
+    # - name: remove all boxes
     #   hcloud_server:
-    #     id: "{{ item.value.id }}"
-    #     labels:
-    #       todelete: "true"
-    #   with_items: "{{ hostvars | dict2items }}"
+    #     name: "{{ item.key  }}"
+    #     state: absent
+    #     api_token: "{{ hetzner_api_token }}"
+    #   async: 1000
+    #   poll: 0
+    #   with_dict: "{{ hosts_to_make }}"
+    - name: add old tag to old servers
+      hcloud_server:
+        id: "{{ item.value.id }}"
+        labels:
+          todelete: "true"
+      with_items: "{{ hostvars | dict2items }}"
     # rename current boxes to add old- prefix
     - name: Create a basic network
       hcloud_network:
@@ -48,7 +48,7 @@
         state: present
     - name: Create a basic server with ssh key
       hcloud_server:
-        name: "{{ item.key }}"
+        name: "{{ item.key }}-{{ uuid }}"
         server_type: "{{ item.value.server_type }}"
         image: "{{ item.value.image }}"
         datacenter: "{{ item.value.location }}"

@@ -5,6 +5,9 @@
   vars_files:
     - "../vars/index.yml"
     - "../vars/sensitive.yml"
+  vars:
+    web_pub: "{{ groups['all'] | select('match', '^rs-web') | map('extract', hostvars, ['ansible_host']) | list | first }}"
+    str_pub: "{{ groups['all'] | select('match', '^rs-str') | map('extract', hostvars, ['ansible_host']) | list | first }}"
   remote_user: "{{ username }}"
   strategy: free
   tasks:
@@ -31,7 +34,7 @@
         zone: "{{ root_dns }}"
         record: "{{ root_dns }}"
         type: A
-        value: "{{ hostvars['rs-web'].ansible_host }}"
+        value: "{{ web_pub }}"
         api_token: "{{ cloudflare_api_token }}"
         solo: true
         proxied: true
@@ -41,7 +44,7 @@
         zone: "{{ root_dns }}"
         record: "{{ docs_subdomain }}"
         type: A
-        value: "{{ hostvars['rs-web'].ansible_host }}"
+        value: "{{ web_pub }}"
         api_token: "{{ cloudflare_api_token }}"
         solo: true
         proxied: true
@@ -51,7 +54,7 @@
         zone: "{{ root_dns }}"
         record: "{{ terminal_subdomain }}"
         type: A
-        value: "{{ hostvars['rs-web'].ansible_host }}"
+        value: "{{ web_pub }}"
         api_token: "{{ cloudflare_api_token }}"
         solo: true
         proxied: true
@@ -61,7 +64,7 @@
         zone: "{{ root_dns }}"
         record: "{{ streamer_subdomain }}"
         type: A
-        value: "{{ hostvars['rs-str'].ansible_host }}"
+        value: "{{ str_pub }}"
         api_token: "{{ cloudflare_api_token }}"
         solo: true
         proxied: true

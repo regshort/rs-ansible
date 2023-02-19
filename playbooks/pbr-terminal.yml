@@ -1,6 +1,6 @@
 ---
 - name: pbr (pull build restart) terminal
-  hosts: rs-web
+  hosts: rs-web*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
@@ -10,7 +10,7 @@
   tasks:
     - name: pull from git
       git:
-        repo: git@github.com:regshort/{{ repo_name }}.git
+        repo: git@github.com:{{ git_org }}/{{ repo_name }}.git
         dest: "{{ [app_dir, repo_name] | path_join }}"
         update: true
         version: main

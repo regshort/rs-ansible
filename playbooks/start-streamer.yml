@@ -1,6 +1,6 @@
 ---
 - name: start streamer
-  hosts: rs-str
+  hosts: rs-str*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"

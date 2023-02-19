@@ -1,6 +1,6 @@
 ---
 - name: debug
-  hosts: all
+  hosts: localhost
   vars_files:
     - "../vars/index.yml"
   remote_user: root
@@ -21,4 +21,4 @@
 
     - name: show current state of the firewall
       ansible.builtin.debug:
-        var: iptables_state.initial_state
+        msg: "{{ groups['all'] | select('match', '^rs-web') | map('extract', hostvars, ['private_ipv4']) | list | first }}"

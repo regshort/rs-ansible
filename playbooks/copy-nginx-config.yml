@@ -1,6 +1,6 @@
 ---
 - name: copy nginx config
-  hosts: rs-web, rs-str
+  hosts: rs-web*:rs-str*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
@@ -33,7 +33,7 @@
         src: "{{ item }}"
         dest: /etc/nginx/sites-available/{{ item | basename }}
       with_fileglob:
-        - "../nginx/{{ inventory_hostname }}/*"
+        - "../nginx/{{ inventory_hostname | regex_replace('^([^-]+-[^-]+).*', '\\1') }}/*"
 
     - name: Enable configs
       become: true
@@ -42,7 +42,7 @@
         dest: /etc/nginx/sites-enabled/{{ item | basename }}
         state: link
       with_fileglob:
-        - "../nginx/{{ inventory_hostname }}/*"
+        - "../nginx/{{ inventory_hostname | regex_replace('^([^-]+-[^-]+).*', '\\1') }}/*"
       notify: Restart Nginx
 
   handlers:

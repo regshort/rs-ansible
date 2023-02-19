@@ -1,11 +1,12 @@
 ---
 - name: setup back
-  hosts: rs-dba
+  hosts: rs-dba*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
   vars:
     repo_name: rs-back
+    dba_priv: "{{ groups['all'] | select('match', '^rs-dba') | map('extract', hostvars, ['private_ipv4']) | list | first }}"
   remote_user: "{{ username }}"
   tasks:
     - name: Install pip3 packages
@@ -66,7 +67,7 @@
         mode: 0600
         dest: "{{ [app_dir, repo_name] | path_join }}/.env"
         content: |
-          DB_URL="postgresql://{{ username }}:{{ username }}@{{ hostvars["rs-dba"].private_ipv4 }}:5432/{{ username }}back"
+          DB_URL="postgresql://{{ username }}:{{ username }}@{{ dba_priv }}:5432/{{ username }}back"
           DB_PROVIDER="prisma-client-py"
           WORKING_DIR="{{ [app_dir, repo_name] | path_join }}"
 

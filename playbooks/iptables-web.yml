@@ -1,6 +1,6 @@
 ---
 - name: add iptables for rs-web
-  hosts: rs-web
+  hosts: rs-web*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"

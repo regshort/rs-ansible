@@ -35,18 +35,19 @@ $ansible_cmd playbooks/hetzner_initiate.yml --vault-password-file=vault_pass.txt
 sleep 30
 # this is the main playbook doing stuff on server
 $ansible_cmd playbooks/initiate.yml --vault-password-file=vault_pass.txt
-# $ansible_cmd -i inventory/todelete/hcloud.yml playbooks/remove-servers-hetzner.yml --vault-password-file=vault_pass.txt
+$ansible_cmd -i inventory/todelete/hcloud.yml playbooks/remove-servers-hetzner.yml --vault-password-file=vault_pass.txt
+$ansible_cmd playbooks/update-dns.yml --vault-password-file=vault_pass.txt
 
-echo "Do you want to update Cloudflare DNS (yes/no) [yes]?"
-read -r answer
+# echo "Do you want to update Cloudflare DNS (yes/no) [yes]?"
+# read -r answer
 
-answer=${answer:-yes}
+# answer=${answer:-yes}
 
-if [ "$answer" == "yes" ]; then
- $ansible_cmd playbooks/update-dns.yml --vault-password-file=vault_pass.txt
-else
-  echo "Cloudflare DNS update skipped."
-fi
+# if [ "$answer" == "yes" ]; then
+#  $ansible_cmd playbooks/update-dns.yml --vault-password-file=vault_pass.txt
+# else
+#   echo "Cloudflare DNS update skipped."
+# fi
 
 # remove pw file
 rm vault_pass.txt

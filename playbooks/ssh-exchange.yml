@@ -1,6 +1,6 @@
 ---
 - name: Copying ssh key from dba to runner then to str
-  hosts: rs-str
+  hosts: rs-str*
   vars_files:
     - "../vars/index.yml"
   gather_facts: false

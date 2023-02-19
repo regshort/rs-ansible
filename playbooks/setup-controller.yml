@@ -1,0 +1,55 @@
+---
+- hosts: rs-controller*
+  become: true
+  vars:
+    vault_token: "4boulda"
+    jenkins_user: "admin"
+    jenkins_password: "4boulda"
+  tasks:
+    # Install Docker and Docker Compose
+    - name: Install Docker and Docker Compose
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+        state: present
+
+    # Clone the Vault and Jenkins Docker Compose files from GitHub
+    - name: Clone the Vault and Jenkins Docker Compose files from GitHub
+      git:
+        repo: https://github.com/your-repo/your-git-repo.git
+        dest: /root/vault-jenkins-docker
+        clone: yes
+
+    # Start the Vault and Jenkins Docker containers
+    - name: Start the Vault and Jenkins Docker containers
+      command: docker-compose up -d
+      args:
+        chdir: /root/vault-jenkins-docker
+
+    # Wait for the Vault and Jenkins containers to start
+    - name: Wait for the Vault and Jenkins containers to start
+      wait_for:
+        host: localhost
+        port: 8200
+        timeout: 30
+        state: started
+
+    # Initialize the Vault server
+    - name: Initialize the Vault server
+      shell: docker exec -it vault vault operator init -key-shares=1 -key-threshold=1 -format=json
+      register: vault_init
+
+    # Unseal the Vault server
+    - name: Unseal the Vault server
+      shell: docker exec -it vault vault operator unseal {{ vault_init.stdout | from_json | json_query('[0].unseal_keys_b64[0]') }}
+      when: vault_init.stdout is defined
+
+    # Authenticate to the Vault server
+    - name: Authenticate to the Vault server
+      shell: docker exec -it vault vault login {{ vault_token }}
+
+    # Configure the Jenkins server
+    - name: Configure the Jenkins server
+      shell: |
+        docker exec -it jenkins bash -c "echo 'jenkins.model.Jenkins.instance.securityRealm.createAccount(\"{{ jenkins_user }}\", \"{{ jenkins_password }}\")' | java -jar /var/jenkins_home/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ groovy ="

@@ -1,6 +1,6 @@
 ---
 - name: add iptables for rs-dba
-  hosts: rs-dba
+  hosts: rs-dba*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"

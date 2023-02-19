@@ -25,7 +25,7 @@
 # hosts: rs-dba, rs-web
 - import_playbook: install-nodejs-lts.yml # install nodejs on boxes that need it
   # install postgres on rs-dba & create dbs & allow connections on network
-  # important to do this so front canrs push schemas
+  # important to do this so front can push schemas
 
 - import_playbook: install-postgres-and-dbs.yml
 # ts-web
@@ -36,6 +36,7 @@
 - import_playbook: setup-back.yml
 - import_playbook: setup-b2f.yml
 - import_playbook: setup-pg2arrow.yml
+- import_playbook: setup-crontab.yml
 # #rs-str
 - import_playbook: setup-streamer.yml
 # RESTORE DB / RUN INIT BACKEND

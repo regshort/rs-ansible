@@ -1,11 +1,13 @@
 ---
 - name: setup pg2arrow
-  hosts: rs-dba
+  hosts: rs-dba*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
   vars:
     repo_name: rs-pg2arrow
+    dba_priv: "{{ groups['all'] | select('match', '^rs-dba') | map('extract', hostvars, ['private_ipv4']) | list | first }}"
+
   remote_user: "{{ username }}"
   tasks:
     - name: Install postgres packages
@@ -24,4 +26,4 @@
       lineinfile:
         path: "{{ [app_dir, repo_name] | path_join }}/.env"
         regexp: "^DATABASE_URL="
-        line: 'DATABASE_URL="postgresql://{{ username }}:{{ username }}@{{ hostvars["rs-dba"].private_ipv4 }}:5432/{{ username }}back"'
+        line: 'DATABASE_URL="postgresql://{{ username }}:{{ username }}@{{ dba_priv }}:5432/{{ username }}back"'

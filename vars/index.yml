@@ -1,5 +1,6 @@
 ---
 # APP SETTINGS
+git_org: regshort
 app_dir: /git
 username: regshort
 root_dns: regshort.com
@@ -26,8 +27,8 @@ hosts_to_make:
       - rs-terminal
     iptables:
       incoming-ssh:
-      - eth+
-      - ACCEPT
+        - eth+
+        - ACCEPT
   rs-dba:
     server_type: cx21
     image: ubuntu-22.04
@@ -38,8 +39,8 @@ hosts_to_make:
       - rs-pg2arrow
     iptables:
       incoming-ssh:
-      - eth+
-      - ACCEPT
+        - eth+
+        - ACCEPT
   rs-str:
     server_type: ccx11
     image: ubuntu-22.04
@@ -53,4 +54,3 @@ hosts_to_make:
       outgoing-ssh:
         - eth+
         - ACCEPT
-

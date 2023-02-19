@@ -2,7 +2,7 @@
 - name: wait for server
   vars_files:
     - "../vars/index.yml"
-  remote_user: "root"
+  remote_user: root
   gather_facts: false
   strategy: free
   hosts: all
