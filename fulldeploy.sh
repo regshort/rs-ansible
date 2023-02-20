@@ -9,8 +9,10 @@ else
   echo "Running without debugging."
   ansible_cmd="ansible-playbook"
 fi
+
 # ssh key to add
 key_file=ssh/id_rsa 
+
 # ask for vault pw
 if [ -z "$HCLOUD_TOKEN" ]; then
   echo "Error: HCLOUD_TOKEN environment variable is not set."
@@ -22,6 +24,16 @@ read -s password
 echo $password > vault_pass.txt
 # add hcloud token to running user env
 # ansible-playbook -v playbooks/setup-enviroment-variables-local.yml --vault-password-file=vault_pass.txt
+# ask if we want to save dbs from running hosts right now
+echo -n "Do you want to dump current dbs (will overwrite dbs/*)? (y/n): "
+read answer
+
+if [ "$answer" == "y" ]; then
+  echo "dumping dbs"
+  $ansible_cmd playbooks/create-db-dumps.yml
+else
+  echo "not dumping dbs"
+fi
 
 # create local ssh keys
 $ansible_cmd playbooks/create-ssh-local.yml

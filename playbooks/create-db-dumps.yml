@@ -1,0 +1,25 @@
+---
+- name: create database dumps
+  hosts: rs-dba*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Dump our dbs
+      community.postgresql.postgresql_db:
+        name: "{{ username }}{{ item }}"
+        login_user: regshort
+        login_password: regshort
+        state: dump
+        target: /tmp/{{ item }}
+        dump_extra_args: --no-owner
+      loop: "{{ database_to_make }}"
+
+    - name: copy dumps to host
+      ansible.builtin.fetch:
+        src: /tmp/{{ item }}
+        dest: "../dbs/{{ item }}"
+        flat: yes
+      loop: "{{ database_to_make }}"
