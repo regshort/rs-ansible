@@ -77,7 +77,11 @@
           WORKING_DIR="{{ [app_dir, repo_name] | path_join }}"
 
     - name: generte prisma client
-      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} prisma generate
+      ansible.builtin.shell:
+        chdir: "{{ [app_dir, repo_name] | path_join }}"
+        cmd: . .venv/bin/activate && prisma generate
+      args:
+        executable: /bin/bash
       remote_user: "{{ username }}"
       register: myoutput
       changed_when: myoutput.rc != 0
@@ -85,7 +89,11 @@
         PATH: "{{ ansible_env.PATH }}:/home/regshort/.local/bin"
 
     - name: push schema
-      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} prisma migrate deploy
+      ansible.builtin.shell:
+        chdir: "{{ [app_dir, repo_name] | path_join }}"
+        cmd: . .venv/bin/activate && prisma migrate deploy
+      args:
+        executable: /bin/bash
       remote_user: "{{ username }}"
       register: myoutput
       changed_when: myoutput.rc != 0
