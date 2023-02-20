@@ -1,24 +1,19 @@
 ---
-- name: debug
-  hosts: localhost
+- name: setup back
+  hosts: rs-dba*
+  gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: root
-
+  vars:
+    repo_name: rs-back
+    dba_priv: "{{ groups['all'] | select('match', '^rs-dba') | map('extract', hostvars, ['private_ipv4']) | list | first }}"
+  remote_user: "{{ username }}"
   tasks:
-    # cannot find good info online on how to change interfaces with ansible so i won't do it for now
-    # - name: Rename external interface
-    #   command: "ip link set {{ item }} name eth1"
-    #   loop: "{{ ansible_interfaces }}"
-    #   when: item is match('^et')
-    #   become: true
-
-    # - name: Rename internal interface
-    #   command: "ip link set {{ item }} name ens20"
-    #   loop: "{{ ansible_interfaces }}"
-    #   when: item is match('^en')
-    #   become: true
-
-    - name: show current state of the firewall
-      ansible.builtin.debug:
-        msg: "{{ groups['all'] | select('match', '^rs-web') | map('extract', hostvars, ['private_ipv4']) | list | first }}"
+    - name: echo PATH
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} python3 -m prisma generate
+      register: res
+      become: false
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/home/regshort/.local/bin"
+    - name: debug
+      debug: msg="{{ res }}"

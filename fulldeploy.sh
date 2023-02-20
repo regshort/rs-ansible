@@ -35,6 +35,15 @@ else
   echo "not dumping dbs"
 fi
 
+echo -n "Do you want to dump current back input folder? (y/n): "
+read answer
+
+if [ "$answer" == "y" ]; then
+  echo "dumping input into input.tgz"
+  $ansible_cmd playbooks/create-back-dump.yml
+else
+  echo "not dumping dbs"
+fi
 # create local ssh keys
 $ansible_cmd playbooks/create-ssh-local.yml
 sleep 5

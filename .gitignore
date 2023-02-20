@@ -3,3 +3,4 @@ dbs/*
 ssh/*
 vault_pass.txt
 buffer/*
+back-data/*

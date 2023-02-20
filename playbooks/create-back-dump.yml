@@ -1,0 +1,21 @@
+---
+- name: compress input on back and copy to host
+  hosts: rs-dba*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  vars:
+    repo_name: rs-back
+  tasks:
+    - name: compress input dir in back to input.tgz
+      community.general.archive:
+        path: "{{ [app_dir, repo_name] | path_join }}/input"
+        dest: /tmp/input.tgz
+
+    - name: copy dumps to host
+      ansible.builtin.fetch:
+        src: /tmp/input.tgz
+        dest: "../back-data/input.tgz"
+        flat: yes
+      loop: "{{ database_to_make }}"
