@@ -35,6 +35,11 @@
       register: myoutput
       changed_when: myoutput.rc != 0
 
+    - name: Install specified python requirements in indicated (virtualenv)
+      ansible.builtin.pip:
+        requirements: "{{ [app_dir, repo_name] | path_join }}/requirements.txt"
+        virtualenv_command: pyvenv
+        virtualenv: "{{ [app_dir, repo_name] | path_join }}/.venv"
     # - name: source .venv
     #   ansible.builtin.command: chdir="{{ [app_dir, repo_name] | path_join }}" source .venv/bin/activate
     #   become: no
