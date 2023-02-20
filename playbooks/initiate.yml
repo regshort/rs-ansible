@@ -32,11 +32,11 @@
 - import_playbook: setup-web.yml
 - import_playbook: setup-terminal.yml
 # - import_playbook: setup-rs-docs.yml there is nothing to do for now we just need to clone and nginx should host it
+
 # rs-dba
 - import_playbook: setup-back.yml
 - import_playbook: setup-b2f.yml
 - import_playbook: setup-pg2arrow.yml
-- import_playbook: setup-crontab.yml
 # #rs-str
 - import_playbook: setup-streamer.yml
 # RESTORE DB / RUN INIT BACKEND
@@ -56,3 +56,6 @@
 - import_playbook: iptables-web.yml
 - import_playbook: iptables-dba.yml
 - import_playbook: iptables-str.yml
+# crontab
+- import_playbook: setup-crontab-dba.yml
+- import_playbook: setup-crontab-str.yml

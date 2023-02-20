@@ -1,0 +1,56 @@
+---
+- name: setup crontab
+  hosts: rs-dba*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  vars:
+    back_repo: rs-back
+    pg2arrow_repo: rs-pg2arrow
+    streamer_repo: rs-streamer
+    b2f_repo: rs-b2f
+    str_priv: "{{ groups['all'] | select('match', '^rs-str') | map('extract', hostvars, ['private_ipv4']) | list | first }}"
+
+  tasks:
+    - name: download_data.py
+      ansible.builtin.cron:
+        name: download_data.py
+        minute: "00"
+        hour: "01"
+        job: "python3 /git/{{ back_repo }}/app/download_data.py"
+
+    - name: merge_data.py
+      ansible.builtin.cron:
+        name: merge_data.py
+        minute: "15"
+        hour: "01"
+        job: "python3 /git/{{ back_repo }}/app/merge_data.py"
+
+    - name: import_data.py
+      ansible.builtin.cron:
+        name: import_data.py
+        minute: "30"
+        hour: "06"
+        job: ". /git/{{ back_repo }}/.venv/bin/activate && /git/{{ back_repo }}/.venv/bin/python3 /git/{{ back_repo }}/app/import_data.py && deactivate"
+
+    - name: pg2arrow.py
+      ansible.builtin.cron:
+        name: pg2arrow.py
+        minute: "30"
+        hour: "07"
+        job: "python3 /git/{{ pg2arrow_repo }}/pg2arrow.py"
+
+    - name: copy arrow with scp
+      ansible.builtin.cron:
+        name: "scp *.arrow to str"
+        minute: "50"
+        hour: "07"
+        job: "scp -i ~/.ssh/id_rsa /git/{{ pg2arrow_repo }}/*.arrow {{ username }}@{{ str_priv }}:/git/{{ streamer_repo }}/app/."
+
+    - name: b2f.ts
+      ansible.builtin.cron:
+        name: "b2f.ts"
+        minute: "00"
+        hour: "08"
+        job: "cd /git/{{ b2f_repo }}/ && /usr/local/lib/npm/bin/ts-node b2f.ts"

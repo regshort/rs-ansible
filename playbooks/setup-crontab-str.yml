@@ -1,0 +1,17 @@
+---
+- name: setup crontab
+  hosts: rs-str*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  vars:
+    streamer_repo: rs-streamer
+
+  tasks:
+    - name: restart ws FIXME DO THIS IN STREAMER (table.update())
+      ansible.builtin.cron:
+        name: "pg2arrow.py"
+        minute: "00"
+        hour: "08"
+        job: "/usr/local/lib/npm/bin/pm2 restart ws"
