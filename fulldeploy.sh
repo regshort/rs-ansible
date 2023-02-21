@@ -42,7 +42,7 @@ if [ "$answer" == "y" ]; then
   echo "dumping input into input.tgz"
   $ansible_cmd playbooks/create-back-dump.yml
 else
-  echo "not dumping dbs"
+  echo "not dumping back input"
 fi
 # create local ssh keys
 $ansible_cmd playbooks/create-ssh-local.yml

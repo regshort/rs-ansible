@@ -16,6 +16,24 @@
       with_fileglob:
         - "../dbs/*"
 
+    - name: delete old dbs
+      postgresql_db:
+        name: "{{ username }}{{ item | basename }}"
+        state: absent
+      become: true
+      become_user: postgres
+      with_fileglob:
+        - "../dbs/*"
+
+    - name: create empty dbs
+      postgresql_db:
+        name: "{{ username }}{{ item | basename }}"
+        owner: "{{ username }}"
+      become: true
+      become_user: postgres
+      with_fileglob:
+        - "../dbs/*"
+
     - name: restore dbs
       postgresql_db:
         state: restore

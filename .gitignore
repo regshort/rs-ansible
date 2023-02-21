@@ -1,6 +1,6 @@
 dbs/*
 *.log
-ssh/*
+# ssh/* WE NEED A VAULT
 vault_pass.txt
 buffer/*
 back-data/*
