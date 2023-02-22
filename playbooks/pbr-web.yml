@@ -1,12 +1,21 @@
 ---
 - name: pull build restart rs-web
-  hosts: all
+  hosts: rs-web*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
   remote_user: "{{ username }}"
-
+  vars:
+    repo_name: rs-web
   tasks:
+    - name: pull from git
+      git:
+        repo: git@github.com:{{ git_org }}/{{ repo_name }}.git
+        dest: "{{ [app_dir, repo_name] | path_join }}"
+        update: true
+        version: main
+        force: true
+
     - name: Install {{ repo_name }}
       community.general.npm:
         path: "{{ [app_dir, repo_name] | path_join }}"
@@ -19,7 +28,7 @@
       changed_when: mymotd.rc != 0
 
     - name: remove pm2
-      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} /usr/local/lib/npm/bin/pm2 remove web
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} /usr/local/lib/npm/bin/pm2 delete web
       become: false
       register: mymotd2
       changed_when: mymotd2.rc != 0
