@@ -8,7 +8,12 @@
   vars:
     repo_name: rs-back
   tasks:
-    - name: Extract input.tgz into /git/rs-back/input
+    - name: Delete content & directory
+      file:
+        state: absent
+        path: "{{ [app_dir, repo_name] | path_join }}/input"
+
+    - name: Extract input.tgz into /git/rs-back
       ansible.builtin.unarchive:
         src: "../back-data/input.tgz"
-        dest: "{{ [app_dir, repo_name] | path_join }}/input"
+        dest: "{{ [app_dir, repo_name] | path_join }}"
