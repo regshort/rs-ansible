@@ -56,8 +56,8 @@ because of ansible.cfg you don't need to setup any inventory or ssh keys but mak
 ## run
 
 **this will delete all networks and boxes in this project** (hetzner deploy script for now cleans up in the future we could deploy alongside and only delete at the end)
-
-`./fulldeploy.sh` runs all
+`[dbdump|dbrestore|backdump|backrestore|dns] [args]`
+`./fulldeploy.sh ` runs all
 
 What create-server.sh does:
 

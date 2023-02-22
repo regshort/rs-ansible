@@ -1,50 +1,76 @@
 #!/bin/bash
-echo -n "Do you want to run with debugging? (y/n): "
-read answer
+echo "WARNING: This script will REPLACE the current servers and UPDATE DNS to the new ones. Are you sure you want to continue? (y/n)"
+read -r response
 
-if [ "$answer" == "y" ]; then
+if [[ ! $response =~ ^[Yy]$ ]]
+then
+  echo "Aborting."
+  exit 1
+fi
+
+# Initialize variables
+debug=0
+dbdump=1
+backdump=1
+dbrestore=1
+backrestore=1
+dns=1
+
+# Loop through the arguments and set variables for each operation based on the flags
+while [ $# -gt 0 ]; do
+  case $1 in
+    "debugging")
+      # Set variable for dbdump operation
+      debug=1
+      ;;
+    "dbdump")
+      # Set variable for dbdump operation
+      dbdump=1
+      ;;
+    "backdump")
+      # Set variable for backdump operation
+      backdump=1
+      ;;
+    "dbrestore")
+      # Set variable for dbrestore operation
+      dbrestore=1
+      ;;
+    "backrestore")
+      # Set variable for backrestore operation
+      backrestore=1
+      ;;
+    "dns")
+      # Set variable for DNS update operation
+      dns=1
+      ;;
+    *)
+      # Print usage message if invalid flag is passed
+      echo "Usage: $0 [dbdump|dbrestore|backdump|backrestore|dns] [args]"
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+read -s -p "Enter the Ansible Vault password: " password
+echo $password > vault_pass.txt
+
+ansible_cmd="ansible-playbook"
+if [[ $debug -eq 1 ]]; then
   echo "Running with debugging enabled."
   ansible_cmd="ansible-playbook -v"
 else
   echo "Running without debugging."
-  ansible_cmd="ansible-playbook"
 fi
 
-# ssh key to add
-key_file=ssh/id_rsa 
-
-# ask for vault pw
-if [ -z "$HCLOUD_TOKEN" ]; then
-  echo "Error: HCLOUD_TOKEN environment variable is not set."
-  exit 1
-fi
-echo "Enter the Ansible Vault password: " 
-read -s password
-# temp write to read it in ansible
-echo $password > vault_pass.txt
-# add hcloud token to running user env
-# ansible-playbook -v playbooks/setup-enviroment-variables-local.yml --vault-password-file=vault_pass.txt
-# ask if we want to save dbs from running hosts right now
-echo -n "Do you want to dump current dbs (will overwrite dbs/*)? (y/n): "
-read answer
-
-if [ "$answer" == "y" ]; then
-  echo "dumping dbs"
-  $ansible_cmd playbooks/create-db-dumps.yml
-else
-  echo "not dumping dbs"
+if [[ $dbdump -eq 1 ]]; then
+    $ansible_cmd playbooks/create-db-dumps.yml
 fi
 
-echo -n "Do you want to dump current back input folder? (y/n): "
-read answer
-
-if [ "$answer" == "y" ]; then
-  echo "dumping input into input.tgz"
-  $ansible_cmd playbooks/create-back-dump.yml
-else
-  echo "not dumping back input"
+if [[ $backdump -eq 1 ]]; then
+    $ansible_cmd playbooks/create-back-dump.yml
 fi
-# create local ssh keys
+
 $ansible_cmd playbooks/create-ssh-local.yml
 sleep 5
 # remove key and readd key
@@ -59,16 +85,16 @@ $ansible_cmd playbooks/initiate.yml --vault-password-file=vault_pass.txt
 $ansible_cmd -i inventory/todelete/hcloud.yml playbooks/remove-servers-hetzner.yml --vault-password-file=vault_pass.txt
 $ansible_cmd playbooks/update-dns.yml --vault-password-file=vault_pass.txt
 
-# echo "Do you want to update Cloudflare DNS (yes/no) [yes]?"
-# read -r answer
+if [[ $dbrestore -eq 1 ]]; then
+  $ansible_cmd playbooks/restore-back-dump.yml
+fi
 
-# answer=${answer:-yes}
+if [[ $backrestore -eq 1 ]]; then
+  $ansible_cmd playbooks/restore-db.yml
+fi
 
-# if [ "$answer" == "yes" ]; then
-#  $ansible_cmd playbooks/update-dns.yml --vault-password-file=vault_pass.txt
-# else
-#   echo "Cloudflare DNS update skipped."
-# fi
+if [[ $dns -eq 1 ]]; then
+  $ansible_cmd playbooks/update-dns.yml --vault-password-file=vault_pass.txt
+fi
 
-# remove pw file
 rm vault_pass.txt
