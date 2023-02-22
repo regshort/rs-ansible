@@ -4,3 +4,4 @@ dbs/*
 vault_pass.txt
 buffer/*
 back-data/*
+ssh/*.tgz

@@ -8,6 +8,7 @@ then
   exit 1
 fi
 
+
 # Initialize variables
 debug=0
 dbdump=1
@@ -15,6 +16,8 @@ backdump=1
 dbrestore=1
 backrestore=1
 dns=1
+
+key_file=ssh/id_rsa 
 
 # Loop through the arguments and set variables for each operation based on the flags
 while [ $# -gt 0 ]; do
@@ -51,6 +54,10 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+if [ -z "$HCLOUD_TOKEN" ]; then
+  echo "Error: HCLOUD_TOKEN environment variable is not set."
+  exit 1
+fi
 
 read -s -p "Enter the Ansible Vault password: " password
 echo $password > vault_pass.txt

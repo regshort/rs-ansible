@@ -1,0 +1,14 @@
+---
+- name: restore back data from local archive
+  hosts: rs-dba*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  vars:
+    repo_name: rs-back
+  tasks:
+    - name: Extract input.tgz into /git/rs-back/input
+      ansible.builtin.unarchive:
+        src: "../back-data/input.tgz"
+        dest: "{{ [app_dir, repo_name] | path_join }}/input"

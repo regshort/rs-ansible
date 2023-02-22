@@ -12,6 +12,7 @@
       community.general.archive:
         path: "{{ [app_dir, repo_name] | path_join }}/input"
         dest: /tmp/input.tgz
+        mode: 644
 
     - name: copy dumps to host
       ansible.builtin.fetch:
