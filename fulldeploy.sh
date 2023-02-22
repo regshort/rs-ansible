@@ -11,11 +11,11 @@ fi
 
 # Initialize variables
 debug=0
-dbdump=1
-backdump=1
-dbrestore=1
-backrestore=1
-dns=1
+dbdump=0
+backdump=0
+dbrestore=0
+backrestore=0
+dns=0
 
 key_file=ssh/id_rsa 
 
