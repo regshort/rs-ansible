@@ -13,12 +13,13 @@
     - name: copy env
       ansible.builtin.copy:
         mode: 0600
-        src: "{{ [app_dir, repo_name] | path_join }}/.env.production.local"
+        src: "{{ [app_dir, repo_name] | path_join }}/.env.production.example"
         dest: "{{ [app_dir, repo_name] | path_join }}/.env"
         remote_src: true
+
     - name: Remove file production
       ansible.builtin.file:
-        path: "{{ [app_dir, repo_name] | path_join }}/.env.production.local"
+        path: "{{ [app_dir, repo_name] | path_join }}/.env.production.example"
         state: absent
 
     # - name: Remove file development
