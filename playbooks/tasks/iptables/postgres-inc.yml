@@ -1,11 +1,12 @@
 ---
-- name: Allow incoming HTTPS
+- name: Allow incoming Postgres
   ansible.builtin.iptables:
-    comment: "Allow incoming HTTPS"
+    comment: "Allow incoming Postgres"
     chain: INPUT
     in_interface: "{{ interface }}"
     protocol: tcp
-    destination_port: 443
+    destination_port: "{{ port }}"
+    source: "{{ subnet }}"
     match:
       - state
       - tcp
@@ -14,13 +15,13 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 #
-#- name: Allow outgoing HTTPS
+#- name: Allow outgoing Postgres
 #  ansible.builtin.iptables:
-#    comment: "Allow outgoing HTTPS"
+#    comment: "Allow outgoing Postgres"
 #    chain: OUTPUT
-#    out_interface: "{{ interface }}"
 #    protocol: tcp
-#    source_port: 443
+#    out_interface: "{{ interface }}"
+#    source_port: "{{ port }}"
 #    match:
 #      - state
 #      - tcp

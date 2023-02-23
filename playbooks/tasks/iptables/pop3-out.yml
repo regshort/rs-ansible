@@ -1,0 +1,15 @@
+---
+- name: Allow outgoing POP3
+  ansible.builtin.iptables:
+    comment: "Allow outgoing POP3"
+    chain: OUTPUT
+    out_interface: "{{ interface }}"
+    protocol: tcp
+    source_port: 110
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+    jump: "{{ jump }}"
+

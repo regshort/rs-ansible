@@ -13,17 +13,17 @@
       - NEW
       - ESTABLISHED
     jump: "{{ jump }}"
-
-- name: Allow incoming HTTPS
-  ansible.builtin.iptables:
-    comment: "Allow incoming HTTPS"
-    chain: INPUT
-    in_interface: "{{ interface }}"
-    protocol: tcp
-    source_port: 443
-    match:
-      - state
-      - tcp
-    ctstate:
-      - ESTABLISHED
-    jump: "{{ jump }}"
+#
+#- name: Allow incoming HTTPS
+#  ansible.builtin.iptables:
+#    comment: "Allow incoming HTTPS"
+#    chain: INPUT
+#    in_interface: "{{ interface }}"
+#    protocol: tcp
+#    source_port: 443
+#    match:
+#      - state
+#      - tcp
+#    ctstate:
+#      - ESTABLISHED
+#    jump: "{{ jump }}"

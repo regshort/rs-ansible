@@ -1,0 +1,15 @@
+---
+- name: Allow incoming postgres
+  ansible.builtin.iptables:
+    comment: "Allow incoming postgres"
+    chain: INPUT
+    in_interface: "{{ interface }}"
+    protocol: tcp
+    source_port: 5432
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+    jump: "{{ jump }}"
+

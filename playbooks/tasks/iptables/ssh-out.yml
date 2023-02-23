@@ -13,17 +13,17 @@
       - NEW
       - ESTABLISHED
     jump: "{{ jump }}"
-
-- name: Allow incoming SSH
-  ansible.builtin.iptables:
-    comment: "Allow incoming SSH"
-    chain: INPUT
-    in_interface: "{{ interface }}"
-    protocol: tcp
-    source_port: 22
-    match:
-      - state
-      - tcp
-    ctstate:
-      - ESTABLISHED
-    jump: "{{ jump }}"
+#
+#- name: Allow incoming SSH
+#  ansible.builtin.iptables:
+#    comment: "Allow incoming SSH"
+#    chain: INPUT
+#    in_interface: "{{ interface }}"
+#    protocol: tcp
+#    source_port: 22
+#    match:
+#      - state
+#      - tcp
+#    ctstate:
+#      - ESTABLISHED
+#    jump: "{{ jump }}"

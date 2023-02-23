@@ -8,8 +8,13 @@
   become: true
   # hetzner_network_ip_subnet
   tasks:
-    # INTERNAL
+
+    ############ 
+    # INTERNAL #
+    ############
+    
     - include_tasks: tasks/iptables/initiate.yml
+
     - include_tasks: tasks/iptables/ssh-inc.yml
       vars:
         interface: "en+"
@@ -20,12 +25,24 @@
         interface: "en+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/postgres-subnet-port.yml
+    - include_tasks: tasks/iptables/postgres-inc.yml
       vars:
         port: 5432
         subnet: "{{ hetzner_network_ip_subnet }}"
         interface: "en+"
         jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/postgres-out.yml
+      vars:
+        port: 5432
+        subnet: "{{ hetzner_network_ip_subnet }}"
+        interface: "en+"
+        jump: "ACCEPT"
+
+    #- include_tasks: tasks/iptables/postgres-out.yml
+    #  vars:
+    #    interface: "en+"
+    #    jump: "ACCEPT"
 
     - include_tasks: tasks/iptables/http-inc.yml
       vars:
@@ -37,11 +54,10 @@
         interface: "en+"
         jump: "ACCEPT"
 
-    # EXTERNAL
-    - include_tasks: tasks/iptables/postgres-out.yml
-      vars:
-        interface: "en+"
-        jump: "ACCEPT"
+    ############
+    # EXTERNAL #
+    ############
+
     - include_tasks: tasks/iptables/ssh-inc.yml
       vars:
         interface: "et+"
@@ -51,16 +67,9 @@
       vars:
         interface: "et+"
         jump: "ACCEPT"
-    # - include_tasks: tasks/iptables/tcp-dos.yml
-    #   vars:
-    #     jump: "ACCEPT"
-    #     limit: 100/min
-    #     limit_burst: 100
-    # - include_tasks: tasks/iptables/dropnull.yml
-    # - include_tasks: tasks/iptables/dropfragmented.yml
-    # - include_tasks: tasks/iptables/forcesyn.yml
-    # - include_tasks: tasks/iptables/dropxmas.yml
+
     - include_tasks: tasks/iptables/chain-policies.yml
+
     - include_tasks: tasks/iptables/http-inc.yml
       vars:
         interface: "et+"
@@ -81,29 +90,94 @@
         interface: "et+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/smtp.yml
+    - include_tasks: tasks/iptables/smtp-inc.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/imap.yml
+    - include_tasks: tasks/iptables/smtp-out.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/imaps.yml
+    - include_tasks: tasks/iptables/imap-inc.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/pop3.yml
+    - include_tasks: tasks/iptables/imap-out.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/pop3s.yml
+    - include_tasks: tasks/iptables/imaps-inc.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
 
+    - include_tasks: tasks/iptables/imaps-out.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/pop3-inc.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/pop3-out.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/pop3s-inc.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/pop3s-out.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/ftp-ctrl-inc.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/ftp-ctrl-out.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/ftp-data-inc.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/ftp-data-out.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/ftp-ctrl-inc.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    - include_tasks: tasks/iptables/ftp-ctrl-out.yml
+      vars:
+        interface: "et+"
+        jump: "ACCEPT"
+
+    # - include_tasks: tasks/iptables/tcp-dos.yml
+    #   vars:
+    #     jump: "ACCEPT"
+    #     limit: 100/min
+    #     limit_burst: 100
+    # - include_tasks: tasks/iptables/dropnull.yml
+    # - include_tasks: tasks/iptables/dropfragmented.yml
+    # - include_tasks: tasks/iptables/forcesyn.yml
+    # - include_tasks: tasks/iptables/dropxmas.yml
+    
     - include_tasks: tasks/iptables/logging.yml

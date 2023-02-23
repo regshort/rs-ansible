@@ -1,0 +1,13 @@
+- name: Allow outgoing Postgres
+  ansible.builtin.iptables:
+    comment: "Allow outgoing Postgres"
+    chain: OUTPUT
+    protocol: tcp
+    out_interface: "{{ interface }}"
+    source_port: "{{ port }}"
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+    jump: "{{ jump }}"

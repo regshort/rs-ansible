@@ -13,17 +13,17 @@
       - NEW
       - ESTABLISHED
     jump: "{{ jump }}"
-
-- name: Allow ALL incoming http
-  ansible.builtin.iptables:
-    comment: "Allow ALL incoming http"
-    chain: OUTPUT
-    out_interface: "{{ interface }}"
-    protocol: tcp
-    source_port: 80
-    match:
-      - state
-      - tcp
-    ctstate:
-      - ESTABLISHED
-    jump: "{{ jump }}"
+#
+#- name: Allow outgoing http
+#  ansible.builtin.iptables:
+#    comment: "Allow outgoing http"
+#    chain: OUTPUT
+#    out_interface: "{{ interface }}"
+#    protocol: tcp
+#    source_port: 80
+#    match:
+#      - state
+#      - tcp
+#    ctstate:
+#      - ESTABLISHED
+#    jump: "{{ jump }}"

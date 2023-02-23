@@ -1,0 +1,14 @@
+---
+- name: Allow outgoing IMAPS
+  ansible.builtin.iptables:
+    comment: "Allow outgoing IMAPS"
+    chain: OUTPUT
+    out_interface: "{{ interface }}"
+    protocol: tcp
+    source_port: 993
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+    jump: "{{ jump }}"
