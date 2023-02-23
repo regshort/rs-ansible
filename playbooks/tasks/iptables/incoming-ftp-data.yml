@@ -1,0 +1,15 @@
+---
+- name: Allow incoming FTP-DATA
+  ansible.builtin.iptables:
+    comment: "Allow incoming FTP-DATA"
+    chain: INPUT
+    out_interface: "{{ interface }}"
+    protocol: tcp
+    source_port: 20
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+      - RELATED
+    jump: "{{ jump }}"

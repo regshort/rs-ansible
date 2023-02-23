@@ -1,0 +1,14 @@
+---
+- name: Allow outgoing FTP-DATA
+  ansible.builtin.iptables:
+    comment: "Allow outgoing FTP-DATA"
+    chain: OUTPUT
+    out_interface: "{{ interface }}"
+    protocol: tcp
+    destination_port: 20
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+    jump: "{{ jump }}"

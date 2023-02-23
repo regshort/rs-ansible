@@ -1,0 +1,15 @@
+---
+- name: Allow incoming FTP Client Port Range
+  ansible.builtin.iptables:
+    comment: "Allow incoming FTP Client Port Range"
+    chain: INPUT
+    out_interface: "{{ interface }}"
+    protocol: tcp
+    source_port: "1024:"
+    destination_port: "1024:"
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+    jump: "{{ jump }}"
