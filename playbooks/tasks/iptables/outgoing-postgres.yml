@@ -1,7 +1,7 @@
 ---
-- name: outgoing postgres
+- name: Allow outgoing postgres
   ansible.builtin.iptables:
-    comment: "outgoing postgres"
+    comment: "Allow outgoing postgres"
     chain: OUTPUT
     out_interface: "{{ interface }}"
     protocol: tcp
@@ -14,9 +14,9 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 
-- name: outgoing postgres
+- name: Allow incoming postgres
   ansible.builtin.iptables:
-    comment: "outgoing postgres"
+    comment: "Allow incoming postgres"
     chain: INPUT
     in_interface: "{{ interface }}"
     protocol: tcp

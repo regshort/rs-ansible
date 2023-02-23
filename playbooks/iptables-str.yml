@@ -64,7 +64,7 @@
         interface: "et+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/sendmail.yml
+    - include_tasks: tasks/iptables/smtp.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"

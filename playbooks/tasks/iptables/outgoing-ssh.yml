@@ -1,7 +1,7 @@
 ---
-- name: outgoing SSH
+- name: Allow outgoing SSH
   ansible.builtin.iptables:
-    comment: "outgoing SSH"
+    comment: "Allow outgoing SSH"
     chain: OUTPUT
     out_interface: "{{ interface }}"
     protocol: tcp
@@ -14,9 +14,9 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 
-- name: outgoing SSH
+- name: Allow incoming SSH
   ansible.builtin.iptables:
-    comment: "outgoing SSH"
+    comment: "Allow incoming SSH"
     chain: INPUT
     in_interface: "{{ interface }}"
     protocol: tcp

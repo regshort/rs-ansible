@@ -1,7 +1,7 @@
 ---
-- name: Allow Sendmail or Postfix
+- name: Allow incoming SMTP
   ansible.builtin.iptables:
-    comment: "Allow Sendmail or Postfix"
+    comment: "Allow incoming SMTP"
     chain: INPUT
     in_interface: "{{ interface }}"
     protocol: tcp
@@ -14,9 +14,9 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 
-- name: Allow ALL incoming SSH
+- name: Allow outgoing SMTP
   ansible.builtin.iptables:
-    comment: "Allow ALL incoming SSH"
+    comment: "Allow outgoing SMTP"
     chain: OUTPUT
     out_interface: "{{ interface }}"
     protocol: tcp

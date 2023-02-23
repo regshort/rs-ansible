@@ -1,7 +1,7 @@
 ---
-- name: Allow POP3S
+- name: Allow incoming POP3S
   ansible.builtin.iptables:
-    comment: "Allow POP3S"
+    comment: "Allow incoming POP3S"
     chain: INPUT
     in_interface: "{{ interface }}"
     protocol: tcp
@@ -14,9 +14,9 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 
-- name: Allow POP3S
+- name: Allow outgoing POP3S
   ansible.builtin.iptables:
-    comment: "Allow POP3S"
+    comment: "Allow outgoing POP3S"
     chain: OUTPUT
     out_interface: "{{ interface }}"
     protocol: tcp

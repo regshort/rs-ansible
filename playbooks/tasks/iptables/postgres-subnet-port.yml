@@ -15,9 +15,9 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 
-- name: incoming postgres subnet port
+- name: outgoing postgres subnet port
   ansible.builtin.iptables:
-    comment: "incoming postgres subnet port"
+    comment: "outgoing postgres subnet port"
     chain: OUTPUT
     protocol: tcp
     out_interface: "{{ interface }}"

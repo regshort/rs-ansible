@@ -1,7 +1,7 @@
 ---
-- name: Allow IMAP
+- name: Allow incoming IMAP
   ansible.builtin.iptables:
-    comment: "Allow IMAP"
+    comment: "Allow incoming IMAP"
     chain: INPUT
     in_interface: "{{ interface }}"
     protocol: tcp
@@ -14,9 +14,9 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 
-- name: Allow IMAP
+- name: Allow outgoing IMAP
   ansible.builtin.iptables:
-    comment: "Allow IMAP"
+    comment: "Allow outgoing IMAP"
     chain: OUTPUT
     out_interface: "{{ interface }}"
     protocol: tcp
