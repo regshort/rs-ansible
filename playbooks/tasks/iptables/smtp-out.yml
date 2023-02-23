@@ -5,7 +5,7 @@
     chain: OUTPUT
     out_interface: "{{ interface }}"
     protocol: tcp
-    source_port: 25
+    source_port: "25, 465, 587"
     match:
       - state
       - tcp
