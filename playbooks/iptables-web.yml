@@ -10,46 +10,46 @@
   tasks:
     # INTERNAL
     - include_tasks: tasks/iptables/initiate.yml
-    - include_tasks: tasks/iptables/incoming-ssh.yml
+    - include_tasks: tasks/iptables/ssh-inc.yml
       vars:
         interface: "en+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/outgoing-ssh.yml
+    - include_tasks: tasks/iptables/ssh-out.yml
       vars:
         interface: "en+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/incoming-http.yml
+    - include_tasks: tasks/iptables/http-inc.yml
       vars:
         interface: "en+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/outgoing-http.yml
+    - include_tasks: tasks/iptables/http-out.yml
       vars:
         interface: "en+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/incoming-https.yml
+    - include_tasks: tasks/iptables/https-inc.yml
       vars:
         interface: "en+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/outgoing-https.yml
+    - include_tasks: tasks/iptables/https-out.yml
       vars:
         interface: "en+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/outgoing-postgres.yml
+    - include_tasks: tasks/iptables/postgres-out.yml
       vars:
         interface: "en+"
         jump: "ACCEPT"
-    - include_tasks: tasks/iptables/incoming-ssh.yml
+    - include_tasks: tasks/iptables/ssh-inc.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/outgoing-ssh.yml
+    - include_tasks: tasks/iptables/ssh-out.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
@@ -63,22 +63,22 @@
     # - include_tasks: tasks/iptables/forcesyn.yml
     # - include_tasks: tasks/iptables/dropxmas.yml
     - include_tasks: tasks/iptables/chain-policies.yml
-    - include_tasks: tasks/iptables/incoming-http.yml
+    - include_tasks: tasks/iptables/http-inc.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/outgoing-http.yml
+    - include_tasks: tasks/iptables/http-out.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/incoming-https.yml
+    - include_tasks: tasks/iptables/https-inc.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
 
-    - include_tasks: tasks/iptables/outgoing-https.yml
+    - include_tasks: tasks/iptables/https-out.yml
       vars:
         interface: "et+"
         jump: "ACCEPT"
