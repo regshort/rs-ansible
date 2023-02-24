@@ -14,7 +14,7 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 #
-#- name: Allow outgoing http
+# - name: Allow outgoing http
 #  ansible.builtin.iptables:
 #    comment: "Allow outgoing http"
 #    chain: OUTPUT

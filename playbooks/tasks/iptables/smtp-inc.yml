@@ -14,7 +14,7 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 #
-#- name: Allow outgoing SMTP
+# - name: Allow outgoing SMTP
 #  ansible.builtin.iptables:
 #    comment: "Allow outgoing SMTP"
 #    chain: OUTPUT

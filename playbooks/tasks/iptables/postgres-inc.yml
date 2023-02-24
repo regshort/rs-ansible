@@ -15,7 +15,7 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 #
-#- name: Allow outgoing Postgres
+# - name: Allow outgoing Postgres
 #  ansible.builtin.iptables:
 #    comment: "Allow outgoing Postgres"
 #    chain: OUTPUT

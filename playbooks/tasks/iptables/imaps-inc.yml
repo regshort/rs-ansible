@@ -14,7 +14,7 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 #
-#- name: Allow outgoing IMAPS
+# - name: Allow outgoing IMAPS
 #  ansible.builtin.iptables:
 #    comment: "Allow outgoing IMAPS"
 #    chain: OUTPUT

@@ -8,11 +8,10 @@
   become: true
   # hetzner_network_ip_subnet
   tasks:
-
-    ############ 
+    ############
     # INTERNAL #
     ############
-    
+
     - include_tasks: tasks/iptables/initiate.yml
 
     - include_tasks: tasks/iptables/ssh-inc.yml
@@ -39,7 +38,7 @@
         interface: "en+"
         jump: "ACCEPT"
 
-    #- include_tasks: tasks/iptables/postgres-out.yml
+    # - include_tasks: tasks/iptables/postgres-out.yml
     #  vars:
     #    interface: "en+"
     #    jump: "ACCEPT"
@@ -179,5 +178,5 @@
     # - include_tasks: tasks/iptables/dropfragmented.yml
     # - include_tasks: tasks/iptables/forcesyn.yml
     # - include_tasks: tasks/iptables/dropxmas.yml
-    
+
     - include_tasks: tasks/iptables/logging.yml

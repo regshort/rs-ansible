@@ -14,7 +14,7 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 #
-#- name: Allow outgoing POP3S
+# - name: Allow outgoing POP3S
 #  ansible.builtin.iptables:
 #    comment: "Allow outgoing POP3S"
 #    chain: OUTPUT

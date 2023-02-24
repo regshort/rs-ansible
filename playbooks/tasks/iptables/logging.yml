@@ -11,7 +11,7 @@
     chain: INPUT
     jump: LOGGING
 
-- name: set logging idk 
+- name: set logging idk
   ansible.builtin.iptables:
     comment: "set logging idk "
     chain: LOGGING

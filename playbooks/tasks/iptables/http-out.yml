@@ -14,7 +14,7 @@
       - ESTABLISHED
     jump: "{{ jump }}"
 #
-#- name: Allow incoming HTTP
+# - name: Allow incoming HTTP
 #  ansible.builtin.iptables:
 #    comment: "Allow incoming HTTP"
 #    chain: INPUT
