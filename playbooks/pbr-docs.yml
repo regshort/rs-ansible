@@ -1,0 +1,17 @@
+---
+- name: pull build restart rs-web
+  hosts: rs-web*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  vars:
+    repo_name: rs-docs
+  tasks:
+    - name: pull from git
+      git:
+        repo: git@github.com:{{ git_org }}/{{ repo_name }}.git
+        dest: "{{ [app_dir, repo_name] | path_join }}"
+        update: true
+        version: main
+        force: true

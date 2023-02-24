@@ -1,0 +1,32 @@
+---
+- name: pull build restart rs-streamer
+  hosts: rs-str*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  vars:
+    repo_name: rs-streamer
+  tasks:
+    - name: pull from git
+      git:
+        repo: git@github.com:{{ git_org }}/{{ repo_name }}.git
+        dest: "{{ [app_dir, repo_name] | path_join }}"
+        update: true
+        version: main
+        force: true
+
+    - name: remove pm2
+      ansible.builtin.command: chdir={{ [app_dir, repo_name] | path_join }} /usr/local/lib/npm/bin/pm2 delete ws
+      become: false
+      register: mymotd2
+      changed_when: mymotd2.rc != 0
+
+    - name: Run pm2 streamer
+      ansible.builtin.command:
+        cmd: /usr/local/lib/npm/bin/pm2 start app/server_starlette_stream.py --name ws --interpreter python3
+        chdir: "{{ [app_dir, repo_name] | path_join }}"
+      args:
+      become: false
+      register: mymotd2
+      changed_when: mymotd2.rc != 0
