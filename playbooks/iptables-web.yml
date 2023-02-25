@@ -47,6 +47,7 @@
     - include_tasks: tasks/iptables/postgres-out.yml
       vars:
         interface: "en+"
+        port: 5432
         jump: "ACCEPT"
 
     ############
