@@ -1,11 +1,39 @@
 ---
-- name: Allow outgoing SMTP
+- name: Allow outgoing SMTP on port 25
   ansible.builtin.iptables:
-    comment: "Allow outgoing SMTP"
+    comment: "Allow outgoing SMTP on port 25"
     chain: OUTPUT
     out_interface: "{{ interface }}"
     protocol: tcp
-    source_port: "25, 465, 587"
+    destination_port: 25
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+    jump: "{{ jump }}"
+
+- name: Allow outgoing SMTP on port 465
+  ansible.builtin.iptables:
+    comment: "Allow outgoing SMTP on port 465"
+    chain: OUTPUT
+    out_interface: "{{ interface }}"
+    protocol: tcp
+    destination_port: 465
+    match:
+      - state
+      - tcp
+    ctstate:
+      - ESTABLISHED
+    jump: "{{ jump }}"
+
+- name: Allow outgoing SMTP on port 587
+  ansible.builtin.iptables:
+    comment: "Allow outgoing SMTP on port 587"
+    chain: OUTPUT
+    out_interface: "{{ interface }}"
+    protocol: tcp
+    destination_port: 587
     match:
       - state
       - tcp

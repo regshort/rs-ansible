@@ -3,7 +3,7 @@
   ansible.builtin.iptables:
     comment: "Allow incoming FTP-DATA"
     chain: INPUT
-    out_interface: "{{ interface }}"
+    in_interface: "{{ interface }}"
     protocol: tcp
     source_port: 20
     match:
