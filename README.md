@@ -69,3 +69,20 @@ What create-server.sh does:
 - run main playbook to install everything for now its called form `main.yml`
 - asks us if we want to update the cloudflare dns to the new servers
 - removes temp pw file
+
+## hosted runner installation
+
+Make sure the box can access github
+
+Pre install
+`sudo apt-add-repository ppa:ansible/ansible`
+`sudo apt update && sudo apt upgrade`
+`git clone git@github.com:regshort/rs-ansible`
+
+Install
+`sudo apt install ansible python3-pip`
+`pip install hcloud`
+
+Add env variable
+`vim ~/.bashrc`
+`export HCLOUD_TOKEN=XXX`
