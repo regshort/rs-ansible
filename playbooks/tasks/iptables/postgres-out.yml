@@ -7,8 +7,8 @@
     source_port: "{{ port }}"
     match:
       - state
-      - conntrack
       - tcp
+      - conntrack
     ctstate:
       - ESTABLISHED
     jump: "{{ jump }}"

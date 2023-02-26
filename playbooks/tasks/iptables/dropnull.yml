@@ -7,7 +7,7 @@
     protocol: tcp
     match:
       - state
-      - tcp
+      - conntrack
     tcp_flags:
       flags: NONE
       flags_set:

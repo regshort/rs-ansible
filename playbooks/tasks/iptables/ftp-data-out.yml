@@ -8,8 +8,8 @@
     destination_port: 20
     match:
       - state
-      - conntrack
       - tcp
+      - conntrack
     ctstate:
       - ESTABLISHED
     jump: "{{ jump }}"

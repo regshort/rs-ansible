@@ -8,8 +8,8 @@
     destination_port: 143
     match:
       - state
-      - conntrack
       - tcp
+      - conntrack
     ctstate:
       - NEW
       - ESTABLISHED

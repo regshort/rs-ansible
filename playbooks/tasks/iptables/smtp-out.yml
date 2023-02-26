@@ -8,8 +8,8 @@
     destination_port: 25
     match:
       - state
-      - conntrack
       - tcp
+      - conntrack
     ctstate:
       - ESTABLISHED
     jump: "{{ jump }}"
@@ -23,8 +23,8 @@
     destination_port: 465
     match:
       - state
-      - conntrack
       - tcp
+      - conntrack
     ctstate:
       - ESTABLISHED
     jump: "{{ jump }}"
@@ -38,8 +38,8 @@
     destination_port: 587
     match:
       - state
-      - conntrack
       - tcp
+      - conntrack
     ctstate:
       - ESTABLISHED
     jump: "{{ jump }}"

@@ -8,8 +8,8 @@
     source_port: 5432
     match:
       - state
-      - conntrack
       - tcp
+      - conntrack
     ctstate:
       - ESTABLISHED
     jump: "{{ jump }}"

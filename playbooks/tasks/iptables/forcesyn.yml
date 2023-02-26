@@ -6,7 +6,7 @@
     protocol: tcp
     match:
       - state
-      - conntrack
+      - tcp
     ctstate:
       - NEW
     jump: DROP

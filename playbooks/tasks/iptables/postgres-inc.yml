@@ -9,8 +9,8 @@
     source: "{{ subnet }}"
     match:
       - state
-      - conntrack
       - tcp
+      - conntrack
     ctstate:
       - NEW
       - ESTABLISHED
