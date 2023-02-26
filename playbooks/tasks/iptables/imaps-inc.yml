@@ -7,6 +7,7 @@
     protocol: tcp
     destination_port: 993
     match:
+      - conntrack
       - state
       - tcp
     ctstate:

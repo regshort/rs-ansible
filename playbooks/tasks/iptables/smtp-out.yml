@@ -7,6 +7,7 @@
     protocol: tcp
     destination_port: 25
     match:
+      - conntrack
       - state
       - tcp
     ctstate:
@@ -21,6 +22,7 @@
     protocol: tcp
     destination_port: 465
     match:
+      - conntrack
       - state
       - tcp
     ctstate:
@@ -35,6 +37,7 @@
     protocol: tcp
     destination_port: 587
     match:
+      - conntrack
       - state
       - tcp
     ctstate:

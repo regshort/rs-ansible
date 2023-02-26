@@ -5,6 +5,7 @@
     chain: INPUT
     protocol: tcp
     match:
+      - conntrack
       - tcp
     limit: "{{ limit }}"
     limit_burst: "{{ limit_burst }}"

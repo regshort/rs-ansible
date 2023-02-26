@@ -6,6 +6,7 @@
     # in_interface: "{{ interface }}"
     protocol: tcp
     match:
+      - conntrack
       - tcp
     tcp_flags:
       flags: NONE

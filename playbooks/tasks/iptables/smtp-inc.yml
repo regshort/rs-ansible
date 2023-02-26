@@ -10,6 +10,7 @@
       - "465"
       - "587"
     match:
+      - conntrack
       - state
       - tcp
     ctstate:

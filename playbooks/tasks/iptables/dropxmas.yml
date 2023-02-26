@@ -5,6 +5,7 @@
     chain: INPUT
     protocol: tcp
     match:
+      - conntrack
       - tcp
     tcp_flags:
       flags: ALL

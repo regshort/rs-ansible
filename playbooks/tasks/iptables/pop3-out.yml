@@ -7,6 +7,7 @@
     protocol: tcp
     source_port: 110
     match:
+      - conntrack
       - state
       - tcp
     ctstate:

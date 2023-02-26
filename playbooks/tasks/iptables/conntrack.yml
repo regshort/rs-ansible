@@ -1,0 +1,23 @@
+---
+- name: Enable incoming connection tracking
+  ansible.builtin.iptables:
+    comment: "Enable incoming connection tracking"
+    chain: INPUT
+    match:
+      - conntrack
+    ctstate:
+      - ESTABLISHED
+      - RELATED
+    jump: "{{ jump }}"
+
+- name: Enable outgoing connection tracking
+  ansible.builtin.iptables:
+    comment: "Enable outgoing connection tracking"
+    chain: OUTPUT
+    match:
+      - conntrack
+    ctstate:
+      - ESTABLISHED
+      - RELATED
+    jump: "{{ jump }}"
+

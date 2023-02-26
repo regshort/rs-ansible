@@ -14,6 +14,10 @@
 
     - include_tasks: tasks/iptables/initiate.yml
 
+    - include_tasks: tasks/conntrack.yml
+      vars:
+        jump: "ACCEPT"
+
     - include_tasks: tasks/iptables/ssh-inc.yml
       vars:
         interface: "en+"
