@@ -7,8 +7,8 @@
     protocol: tcp
     source_port: 5432
     match:
-      - conntrack
       - state
+      - conntrack
       - tcp
     ctstate:
       - ESTABLISHED

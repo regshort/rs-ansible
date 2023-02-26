@@ -7,8 +7,8 @@
     protocol: tcp
     destination_port: 21
     match:
-      - conntrack
       - state
+      - conntrack
       - tcp
     ctstate:
       - ESTABLISHED

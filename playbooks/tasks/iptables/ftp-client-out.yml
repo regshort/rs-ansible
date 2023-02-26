@@ -8,8 +8,8 @@
     source_port: "1024:"
     destination_port: "1024:"
     match:
-      - conntrack
       - state
+      - conntrack
       - tcp
     ctstate:
       - NEW

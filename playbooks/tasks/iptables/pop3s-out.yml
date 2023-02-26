@@ -7,8 +7,8 @@
     protocol: tcp
     source_port: 995
     match:
-      - conntrack
       - state
+      - conntrack
       - tcp
     ctstate:
       - ESTABLISHED

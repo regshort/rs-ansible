@@ -8,8 +8,8 @@
     destination_port: "{{ port }}"
     source: "{{ subnet }}"
     match:
-      - conntrack
       - state
+      - conntrack
       - tcp
     ctstate:
       - NEW

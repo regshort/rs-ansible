@@ -6,8 +6,8 @@
     out_interface: "{{ interface }}"
     source_port: "{{ port }}"
     match:
-      - conntrack
       - state
+      - conntrack
       - tcp
     ctstate:
       - ESTABLISHED

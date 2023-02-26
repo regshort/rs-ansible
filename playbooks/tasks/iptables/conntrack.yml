@@ -4,7 +4,7 @@
     comment: "Enable incoming connection tracking"
     chain: INPUT
     match:
-      - conntrack
+      - state
     ctstate:
       - ESTABLISHED
       - RELATED
@@ -15,7 +15,7 @@
     comment: "Enable outgoing connection tracking"
     chain: OUTPUT
     match:
-      - conntrack
+      - state
     ctstate:
       - ESTABLISHED
       - RELATED

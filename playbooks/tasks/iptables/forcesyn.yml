@@ -5,8 +5,8 @@
     chain: INPUT
     protocol: tcp
     match:
-      - conntrack
       - state
+      - conntrack
     ctstate:
       - NEW
     jump: DROP
