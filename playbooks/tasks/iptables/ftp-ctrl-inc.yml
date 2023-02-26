@@ -7,7 +7,6 @@
     protocol: tcp
     destination_port: 21
     match:
-      - state
       - tcp
       - conntrack
     ctstate:

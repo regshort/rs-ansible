@@ -5,7 +5,6 @@
     chain: INPUT
     protocol: tcp
     match:
-      - state
       - tcp
     ctstate:
       - NEW

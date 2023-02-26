@@ -7,7 +7,6 @@
     protocol: tcp
     source_port: 143
     match:
-      - state
       - tcp
       - conntrack
     ctstate:

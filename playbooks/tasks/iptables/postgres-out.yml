@@ -6,7 +6,6 @@
     out_interface: "{{ interface }}"
     source_port: "{{ port }}"
     match:
-      - state
       - tcp
       - conntrack
     ctstate:
