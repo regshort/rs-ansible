@@ -3,6 +3,7 @@
   ansible.builtin.iptables:
     comment: "Create LOGGING chain"
     chain: LOGGING
+    action: create
 
 - name: set input to logging idk
   ansible.builtin.iptables:
