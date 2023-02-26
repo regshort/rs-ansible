@@ -14,7 +14,7 @@
 
     - include_tasks: tasks/iptables/initiate.yml
 
-    - include_tasks: tasks/conntrack.yml
+    - include_tasks: tasks/iptables/conntrack.yml
       vars:
         jump: "ACCEPT"
 

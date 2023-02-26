@@ -10,6 +10,13 @@
 - import_playbook: ssh-to-box.yml # copy the ssh key to the new user so we can connect to it
 - import_playbook: ssh-hardening.yml # disable ssh login stuff
 - import_playbook: fix-history.yml # fixes history
+
+# setup iptables
+- import_playbook: setup-iptables-log.yml
+- import_playbook: iptables-web.yml
+- import_playbook: iptables-dba.yml
+- import_playbook: iptables-str.yml
+
 - import_playbook: update-ubuntu.yml # as filename
 - import_playbook: create-ssh.yml
 - import_playbook: upload-ssh-github.yml
@@ -51,11 +58,6 @@
 - import_playbook: copy-arrow-files.yml
 # Decoupled start script becuae we need to have files first
 - import_playbook: start-streamer.yml
-# setup iptables
-- import_playbook: setup-iptables-log.yml
-- import_playbook: iptables-web.yml
-- import_playbook: iptables-dba.yml
-- import_playbook: iptables-str.yml
 # crontab
 - import_playbook: setup-crontab-dba.yml
 - import_playbook: setup-crontab-str.yml
