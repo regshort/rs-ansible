@@ -38,6 +38,7 @@
         state: present
         api_token: "{{ hetzner_api_token }}"
       register: network_results
+
     - name: Create a basic subnetwork
       hcloud_subnetwork:
         network: "{{ network_results.hcloud_network.name }}"

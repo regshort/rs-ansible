@@ -86,3 +86,7 @@ Install
 Add env variable
 `vim ~/.bashrc`
 `export HCLOUD_TOKEN=XXX`
+
+### controller playbook
+
+We create a controller and clone this git, we setup everything needed to run it.

@@ -25,10 +25,7 @@ hosts_to_make:
       - rs-web
       - rs-docs
       - rs-terminal
-    iptables:
-      incoming-ssh:
-        - eth+
-        - ACCEPT
+
   rs-dba:
     server_type: cx21
     image: ubuntu-22.04
@@ -37,20 +34,17 @@ hosts_to_make:
       - rs-back
       - rs-b2f
       - rs-pg2arrow
-    iptables:
-      incoming-ssh:
-        - eth+
-        - ACCEPT
+
   rs-str:
     server_type: ccx11
     image: ubuntu-22.04
     location: nbg1-dc3
     repos:
       - rs-streamer
-    iptables:
-      incoming-ssh:
-        - eth+
-        - ACCEPT
-      outgoing-ssh:
-        - eth+
-        - ACCEPT
+
+  rs-controller:
+    server_type: cx11
+    image: ubuntu-22.04
+    location: nbg1-dc3
+    repos:
+      - rs-ansible

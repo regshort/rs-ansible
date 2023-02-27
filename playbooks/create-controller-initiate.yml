@@ -1,0 +1,21 @@
+---
+# check/wait for servers to be online
+# INITIATED
+# hosts: all
+
+- import_playbook: wait-for-servers.yml
+- import_playbook: change-root-password.yml # creates pw from vars with its hostname
+- import_playbook: change-hostname.yml # change hostname
+- import_playbook: create-user.yml # create new user from vars with password build from vars
+- import_playbook: ssh-to-box.yml # copy the ssh key to the new user so we can connect to it
+- import_playbook: ssh-hardening.yml # disable ssh login stuff
+- import_playbook: fix-history.yml # fixes history
+- import_playbook: update-ubuntu.yml # as filename
+- import_playbook: create-ssh.yml
+- import_playbook: upload-ssh-github.yml
+
+- import_playbook: create-app-dir.yml
+- import_playbook: clone-repos.yml
+
+- import_playbook: setup-ansible.yml
+- import_playbook: setup-jenkins.yml

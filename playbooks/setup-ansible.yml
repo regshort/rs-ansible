@@ -1,0 +1,53 @@
+---
+- name: setup controller
+  hosts: rs-controller*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
+  vars:
+    repo_name: rs-web
+  remote_user: "{{ username }}"
+  tasks:
+    - name: Add ansible stable repository from PPA and install its signing key on Ubuntu target
+      ansible.builtin.apt_repository:
+        repo: ppa:ansible/ansible
+      become: true
+
+    - name: Update apt-get repo and cache
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+      become: true
+
+    - name: Install a list of packages
+      ansible.builtin.apt:
+        pkg:
+          - ansible
+          - python3-pip
+      become: true
+
+    - name: Install hcloud python package
+      ansible.builtin.pip:
+        name: hcloud
+
+    - name: add env
+      lineinfile:
+        path: ~/.bashrc
+        line: export HCLOUD_TOKEN="{{ hetzner_api_token }}"
+        regexp: "^HCLOUD_TOKEN="
+
+    - name: source file
+      ansible.builtin.shell:
+        chdir: "~"
+        cmd: source .bashrc
+      args:
+        executable: /bin/bash
+      register: sourceresult
+
+    - name: echo .bash_profile
+      ansible.builtin.shell:
+        cmd: echo $HCLOUD_TOKEN
+      args:
+        executable: /bin/bash
+      register: tokenprint
+
+    - debug: var="tokenprint"

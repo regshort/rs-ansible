@@ -1,7 +1,7 @@
 ---
 - name: Upload keys to github
   hosts: all
-  gather_facts: false
+  gather_facts: true
   vars_files:
     - "../vars/index.yml"
     - "../vars/sensitive.yml"

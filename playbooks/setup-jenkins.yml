@@ -1,0 +1,48 @@
+---
+- name: setup jenkins
+  hosts: rs-controller*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
+  vars:
+    jenkins_admin_username: "admin"
+    jenkins_admin_password: "password"
+  remote_user: "{{ username }}"
+  become: true
+  tasks:
+    - name: Add Jenkins APT key
+      apt_key:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+        state: present
+
+    - name: Add Jenkins APT repository
+      apt_repository:
+        repo: deb https://pkg.jenkins.io/debian-stable binary/
+        state: present
+        update_cache: yes
+
+    - name: Install Java
+      apt:
+        name: openjdk-11-jdk
+        state: present
+
+    - name: Install Jenkins
+      apt:
+        name: jenkins
+        state: present
+
+    - name: Start Jenkins service
+      service:
+        name: jenkins
+        state: started
+        enabled: true
+
+    - name: Set Jenkins admin password
+      expect:
+        command: "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
+        responses:
+          "Unlock Jenkins": '\n'
+          "Admin username:": '{{ jenkins_admin_username }}\n'
+          "Admin password:": '{{ jenkins_admin_password }}\n'
+        echo: false

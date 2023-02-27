@@ -1,0 +1,55 @@
+---
+- name: Create Network & servers
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
+  vars:
+    uuid: "{{ 99999999 | random | to_uuid }}"
+  # first create a new network to use
+  # then create all server on that network
+  tasks:
+    # first create a server
+    # install deps create key and add it to github
+    # setup rs-ansible on it
+
+    # if we want to be able to run this at any time we need to check for networks
+
+    # - name: remove a basic network
+    #   hcloud_network:
+    #     name: "default"
+    #     ip_range: "{{ hetzner_network_ip_range }}"
+    #     state: present
+    #     api_token: "{{ hetzner_api_token }}"
+    #   register: network_results
+    # - name: Create a basic subnetwork
+    #   hcloud_subnetwork:
+    #     network: "{{ network_results.hcloud_network.name }}"
+    #     ip_range: "{{ hetzner_network_ip_subnet }}"
+    #     network_zone: eu-central
+    #     api_token: "{{ hetzner_api_token }}"
+    #     type: cloud
+    #     state: present
+
+    - name: Create a basic network
+      hcloud_network:
+        name: "default"
+        ip_range: "{{ hetzner_network_ip_range }}"
+        state: present
+        api_token: "{{ hetzner_api_token }}"
+      register: network_results
+    - name: Create a basic server with ssh key
+      hcloud_server:
+        name: "rs-controller-{{ uuid }}"
+        server_type: "{{ hosts_to_make['rs-controller'].server_type }}"
+        image: "{{ hosts_to_make['rs-controller'].image }}"
+        datacenter: "{{ hosts_to_make['rs-controller'].location }}"
+        api_token: "{{ hetzner_api_token }}"
+        ssh_keys:
+          - ansible@runner
+        state: present
+        private_networks: ["default"]
+        labels:
+          running: "true"
+          controller: "true"
