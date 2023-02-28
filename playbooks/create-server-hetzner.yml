@@ -29,6 +29,7 @@
         id: "{{ item.value.id }}"
         labels:
           todelete: "true"
+      when: not item.key.startswith('rs-controller') # fix to not autodelete rs-controller
       with_items: "{{ hostvars | dict2items }}"
     # rename current boxes to add old- prefix
     - name: Create a basic network
