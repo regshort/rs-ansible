@@ -1,0 +1,16 @@
+---
+- name: create hosts entries on localhost this runs on
+  # this should add all other hosts to a servers hosts file
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  become: true
+  tasks:
+    - name: Replace a localhost entry searching for a literal string to avoid escaping
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: "{{ item.value.private_ipv4 }} {{ item.key.split('-')[0] }}-{{ item.key.split('-')[1] }}"
+        state: present
+      with_items: "{{ hostvars | dict2items }}"
