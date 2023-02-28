@@ -21,8 +21,7 @@
 - import_playbook: create-ssh.yml
 - import_playbook: upload-ssh-github.yml
 - import_playbook: copy-cf-origin-ssl.yml
-- import_playbook: copy-nginx-config.yml
-
+- import_playbook: installandcopy-nginx-config.yml
 # CLONE REPOS
 # hosts: all
 - import_playbook: create-app-dir.yml

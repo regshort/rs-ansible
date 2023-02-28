@@ -1,0 +1,21 @@
+---
+- name: update dns
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
+  vars:
+    controller_pub: "{{ groups['all'] | select('match', '^rs-controller') | map('extract', hostvars, ['ansible_host']) | list | first }}"
+  remote_user: "{{ username }}"
+  strategy: free
+  tasks:
+    - name: create dns for peter.regshort.com
+      community.general.cloudflare_dns:
+        zone: "{{ root_dns }}"
+        type: A
+        record: "peter"
+        value: "{{ controller_pub }}"
+        proxied: true
+        api_token: "{{ cloudflare_api_token }}"
+        solo: true

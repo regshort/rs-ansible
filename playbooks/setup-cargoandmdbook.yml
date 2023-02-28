@@ -1,0 +1,36 @@
+---
+- name: setup cargo and mdbook
+  hosts: rs-controller*
+  gather_facts: true
+  vars_files:
+    - "../vars/index.yml"
+  vars:
+    repo_name: rs-docs
+  remote_user: "{{ username }}"
+  tasks:
+    - name: Install Rust
+      shell: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+      environment:
+        HOME: "{{ ansible_env.HOME }}"
+      become_user: "jenkins"
+
+    - name: source file
+      ansible.builtin.shell:
+        chdir: "~"
+        cmd: source .bashrc
+      args:
+        executable: /bin/bash
+      register: sourceresult
+
+    - name: Add Rust to PATH
+      lineinfile:
+        dest: "{{ ansible_env.HOME }}/.bashrc"
+        line: 'export PATH="$HOME/.cargo/bin:$PATH"'
+        create: true
+      become_user: "jenkins"
+
+    - name: Install Cargo package
+      shell: cargo install mdbook
+      args:
+        executable: /bin/bash
+      become_user: "jenkins"

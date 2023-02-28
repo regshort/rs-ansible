@@ -13,6 +13,8 @@
 - import_playbook: update-ubuntu.yml # as filename
 - import_playbook: create-ssh.yml
 - import_playbook: upload-ssh-github.yml
+- import_playbook: copy-cf-origin-ssl.yml
+- import_playbook: installandcopy-nginx-config.yml
 
 - import_playbook: create-app-dir.yml
 - import_playbook: clone-repos.yml

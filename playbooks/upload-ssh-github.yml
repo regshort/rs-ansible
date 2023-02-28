@@ -17,3 +17,4 @@
         name: "{{ 99999999 | random | to_uuid }}{{ inventory_hostname | regex_replace('^([^-]+-[^-]+).*', '\\1') }}{{ ansible_default_ipv4.address.split('.')[-1] }}"
         pubkey: "{{ slurped_key_b64.content | b64decode }}"
         token: "{{ github_access_token }}"
+      retries: 3

@@ -1,6 +1,6 @@
 ---
 - name: copy nginx config
-  hosts: rs-web*:rs-str*
+  hosts: rs-web*:rs-str*:rs-controller*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
