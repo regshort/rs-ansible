@@ -4,6 +4,7 @@
 # hosts: all
 
 - import_playbook: wait-for-servers.yml
+- import_playbook: hetzner-create-volume.yml
 - import_playbook: change-root-password.yml # creates pw from vars with its hostname
 - import_playbook: change-hostname.yml # change hostname
 - import_playbook: create-user.yml # create new user from vars with password build from vars
@@ -12,51 +13,51 @@
 - import_playbook: fix-history.yml # fixes history
 
 # setup iptables
-- import_playbook: setup-iptables-log.yml
-- import_playbook: iptables-web.yml
-- import_playbook: iptables-dba.yml
-- import_playbook: iptables-str.yml
+# - import_playbook: setup-iptables-log.yml
+# - import_playbook: iptables-web.yml
+# - import_playbook: iptables-dba.yml
+# - import_playbook: iptables-str.yml
 
 - import_playbook: update-ubuntu.yml # as filename
 - import_playbook: create-ssh.yml
 - import_playbook: upload-ssh-github.yml
 - import_playbook: copy-cf-origin-ssl.yml
-- import_playbook: installandcopy-nginx-config.yml
-# CLONE REPOS
-# hosts: all
-- import_playbook: create-app-dir.yml
-- import_playbook: clone-repos.yml
+# - import_playbook: installandcopy-nginx-config.yml
+# # CLONE REPOS
+# # hosts: all
+# - import_playbook: create-app-dir.yml
+# - import_playbook: clone-repos.yml
 
-# INSTALL NODEJS
-# hosts: rs-dba, rs-web
-- import_playbook: install-nodejs-lts.yml # install nodejs on boxes that need it
-  # install postgres on rs-dba & create dbs & allow connections on network
-  # important to do this so front can push schemas
+# # INSTALL NODEJS
+# # hosts: rs-dba, rs-web
+# - import_playbook: install-nodejs-lts.yml # install nodejs on boxes that need it
+#   # install postgres on rs-dba & create dbs & allow connections on network
+#   # important to do this so front can push schemas
 
-- import_playbook: install-postgres-and-dbs.yml
-# ts-web
-- import_playbook: setup-web.yml
-- import_playbook: setup-terminal.yml
-# - import_playbook: setup-rs-docs.yml there is nothing to do for now we just need to clone and nginx should host it
+# - import_playbook: install-postgres-and-dbs.yml
+# # ts-web
+# - import_playbook: setup-web.yml
+# - import_playbook: setup-terminal.yml
+# # - import_playbook: setup-rs-docs.yml there is nothing to do for now we just need to clone and nginx should host it
 
-# rs-dba
-- import_playbook: setup-back.yml
-- import_playbook: setup-b2f.yml
-- import_playbook: setup-pg2arrow.yml
-# #rs-str
-- import_playbook: setup-streamer.yml
-# RESTORE DB / RUN INIT BACKEND
-- import_playbook: restore-db.yml
-# RUN pg2arrow
-- import_playbook: start-pg2arrow.yml
-# RUN b2f
-- import_playbook: start-b2f.yml
-# CP FILES FROM ONE HOST TO OTHER
-- import_playbook: ssh-to-local.yml
-- import_playbook: ssh-exchange.yml
-- import_playbook: copy-arrow-files.yml
-# Decoupled start script becuae we need to have files first
-- import_playbook: start-streamer.yml
-# crontab
-- import_playbook: setup-crontab-dba.yml
-- import_playbook: setup-crontab-str.yml
+# # rs-dba
+# - import_playbook: setup-back.yml
+# - import_playbook: setup-b2f.yml
+# - import_playbook: setup-pg2arrow.yml
+# # #rs-str
+# - import_playbook: setup-streamer.yml
+# # RESTORE DB / RUN INIT BACKEND
+# - import_playbook: restore-db.yml
+# # RUN pg2arrow
+# - import_playbook: start-pg2arrow.yml
+# # RUN b2f
+# - import_playbook: start-b2f.yml
+# # CP FILES FROM ONE HOST TO OTHER
+# - import_playbook: ssh-to-local.yml
+# - import_playbook: ssh-exchange.yml
+# - import_playbook: copy-arrow-files.yml
+# # Decoupled start script becuae we need to have files first
+# - import_playbook: start-streamer.yml
+# # crontab
+# - import_playbook: setup-crontab-dba.yml
+# - import_playbook: setup-crontab-str.yml

@@ -1,0 +1,4 @@
+# requirements.yml
+---
+# Install a role from Ansible Galaxy
+- src: community.crypto

@@ -1,0 +1,14 @@
+---
+
+- name: install portainer
+  hosts: rs-controller*
+  become: true
+  vars:
+    pip_install_packages:
+      - name: docker
+  vars_files:
+    - vars/portainer.yml
+  roles:
+   - geerlingguy.docker
+   - geerlingguy.pip
+   - portainer

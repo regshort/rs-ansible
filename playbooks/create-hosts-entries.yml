@@ -11,6 +11,6 @@
     - name: Replace a localhost entry searching for a literal string to avoid escaping
       ansible.builtin.lineinfile:
         path: /etc/hosts
-        line: "{{ item.value.private_ipv4 }} {{ item.key.split('-')[0] }}-{{ item.key.split('-')[1] }}"
+        line: "{{ item.value.private_ipv4 }} {{ item.key.split('-')[0] }}-{{ item.key.split('-')[1] }} ws-{{ item.key.split('-')[0] }}-{{ item.key.split('-')[1] }}"
         state: present
       with_items: "{{ hostvars | dict2items }}"

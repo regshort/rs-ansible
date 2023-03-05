@@ -1,5 +1,10 @@
 # Ansible
 
+https://blog.okami101.io/2022/02/setup-a-docker-swarm-cluster-part-ii-hetzner-cloud-nfs/#create-the-cloud-servers-and-networks-
+
+
+
+
 We should probably make `containers` for each repo so we do not need to care about installing repos and only need to do initiation
 
 ### Things to fix:

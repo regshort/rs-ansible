@@ -2,7 +2,7 @@
 # APP SETTINGS
 git_org: regshort
 app_dir: /git
-username: regshort
+username: swarm
 root_dns: regshort.com
 terminal_subdomain: terminal
 docs_subdomain: docs
@@ -15,36 +15,27 @@ database_to_make: # this will add the username before it {{ username }}{{ db }}
 hetzner_network_ip_range: 10.0.0.0/16
 hetzner_network_ip_subnet: 10.0.0.0/24
 hetzner_deploy_sshkey: ansible@runner
-
+volumes_to_make:
+  - volume-01:
+      size: 20
+      server: data-01
 hosts_to_make:
-  rs-web:
-    server_type: cpx11
-    image: ubuntu-22.04
-    location: nbg1-dc3
-    repos:
-      - rs-web
-      - rs-docs
-      - rs-terminal
-
-  rs-dba:
+  manager-01:
     server_type: cx21
     image: ubuntu-22.04
     location: nbg1-dc3
-    repos:
-      - rs-back
-      - rs-b2f
-      - rs-pg2arrow
 
-  rs-str:
+  webworker-01:
     server_type: ccx11
     image: ubuntu-22.04
     location: nbg1-dc3
-    repos:
-      - rs-streamer
 
-  rs-controller:
-    server_type: cx11
+  streamworker-01:
+    server_type: ccx11
     image: ubuntu-22.04
     location: nbg1-dc3
-    repos:
-      - rs-ansible
+
+  data-01:
+    server_type: ccx11
+    image: ubuntu-22.04
+    location: nbg1-dc3

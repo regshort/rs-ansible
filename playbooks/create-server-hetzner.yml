@@ -48,6 +48,8 @@
         api_token: "{{ hetzner_api_token }}"
         type: cloud
         state: present
+      
+      # we should be able to create from a list this does not do that really (nested loops)
     - name: Create a basic server with ssh key
       hcloud_server:
         name: "{{ item.key }}-{{ uuid }}"
@@ -64,5 +66,7 @@
       async: 1000
       poll: 0
       with_dict: "{{ hosts_to_make }}"
+
+
 
       # here we could wait for ssh of the server to start before finish. this would make wait-for-ssh.yml useless

@@ -1,30 +1,31 @@
 ---
-- name: create ssh local
+- name: Create ssh local
   hosts: localhost
   gather_facts: true
   vars_files:
     - "../vars/index.yml"
 
   tasks:
-    - name: check if rsa exists
+    - name: Check if rsa exists
       stat:
         path: "../ssh/id_rsa"
       register: register_name
 
-    - name: copy to old so we dont overwrite running keys
+    - name: Copy to old so we dont overwrite running keys
       community.general.archive:
         path: "../ssh/"
         dest: "../ssh/old-{{ ansible_date_time.iso8601_basic }}.tgz"
-        mode: 0744
+        mode: '700'
       when: register_name.stat.exists
 
     - name: Creates directory
       file:
         path: "../ssh"
         state: directory
-        mode: 0700
+        mode: '700'
 
-    - name: create ssh
+    - name: Create ssh
       community.crypto.openssh_keypair:
         path: "../ssh/id_rsa"
         force: true
+        mode: '700'

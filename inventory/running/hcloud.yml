@@ -1,3 +1,4 @@
 plugin: hcloud
 network: "default"
 label_selector: running
+token: "HHMRWUX8F4AvJinHCHPFjtr8AFrQV71ciqGgnzXxpxKpHKf3AIsUj9dyMPC"

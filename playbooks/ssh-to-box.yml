@@ -11,7 +11,7 @@
 
   tasks:
     - name: Copy SSh Key | copying shh key to remote host
-      authorized_key:
+      ansible.posix.authorized_key:
         user: "{{ username }}"
         state: present
         key: "{{ lookup('file', '../ssh/id_rsa.pub') }}"
