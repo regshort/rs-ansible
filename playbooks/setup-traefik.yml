@@ -1,0 +1,51 @@
+---
+- name: Setup traefik
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Rnsures etc/traefik exists
+      ansible.builtin.file:
+        path: "/etc/traefik"
+        state: directory
+      become: true
+      
+    - name: Rnsures etc/traefik exists
+      ansible.builtin.file:
+        path: "/mnt/storage-pool/certs"
+        state: directory
+      become: true
+    - name: Copy traefik config
+      ansible.builtin.copy:
+        src: "../apps/traefik/traefik.yml"
+        dest: /etc/traefik/traefik.yml
+        owner: "{{ username }}"
+        mode: '0644'
+      become: true
+
+    - name: Copy traefik stack config
+      ansible.builtin.copy:
+        src: "../apps/traefik/traefik-stack.yml"
+        dest: ~/traefik-stack.yml
+        owner: "{{ username }}"
+        mode: '0644'
+
+    - name: Add tag to manager
+      ansible.builtin.command:
+        cmd: docker node update --label-add traefik-public.certificates=true {{ inventory_hostname.split('-')[:2] | join('-') }}
+      become: true
+      delegate_to: "{{ groups['all'] | select('match', '^manager') | map('extract', hostvars, ['ipv4']) | list | first }}"
+
+    - name: Generate encrypted password
+      shell: openssl passwd -apr1 only4you
+      register: encrypted_password
+
+    - name: Start traefik
+      ansible.builtin.command:
+        cmd: docker stack deploy -c /home/swarm/traefik-stack.yml traefik
+      environment:
+        HASHED_PASSWORD: "{{ encrypted_password.stdout }}"
+      become: true

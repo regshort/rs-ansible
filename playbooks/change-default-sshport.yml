@@ -1,0 +1,25 @@
+---
+- name: Change default ssh port
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "root"
+  vars:
+    - ansible_ssh_port: 22
+  tasks:
+    - name: Change SSH port to 2222
+      ansible.builtin.lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^#?Port'
+        line: 'Port 2222'
+      notify:
+        - Restart ssh
+      become: true
+
+  handlers:
+    - name: Restart ssh
+      ansible.builtin.service:
+        name: ssh
+        state: restarted
+      become: true

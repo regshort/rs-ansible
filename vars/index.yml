@@ -3,9 +3,10 @@
 git_org: regshort
 app_dir: /git
 username: swarm
-root_dns: regshort.com
+root_dns: frogtech.dev
 terminal_subdomain: terminal
 docs_subdomain: docs
+swarm_subdomain: sw
 streamer_subdomain: ws
 database_to_make: # this will add the username before it {{ username }}{{ db }}
   - front
@@ -26,16 +27,16 @@ hosts_to_make:
     location: nbg1-dc3
 
   webworker-01:
-    server_type: ccx11
+    server_type: cx21
     image: ubuntu-22.04
     location: nbg1-dc3
 
   streamworker-01:
-    server_type: ccx11
+    server_type: cx21
     image: ubuntu-22.04
     location: nbg1-dc3
 
   data-01:
-    server_type: ccx11
+    server_type: cx21
     image: ubuntu-22.04
     location: nbg1-dc3

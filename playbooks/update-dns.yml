@@ -1,70 +1,31 @@
 ---
-- name: update dns
+- name: Update dns
   hosts: localhost
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
     - "../vars/sensitive.yml"
   vars:
-    web_pub: "{{ groups['all'] | select('match', '^rs-web') | map('extract', hostvars, ['ansible_host']) | list | first }}"
-    str_pub: "{{ groups['all'] | select('match', '^rs-str') | map('extract', hostvars, ['ansible_host']) | list | first }}"
-  remote_user: "{{ username }}"
-  strategy: free
+    manager_pub: "{{ groups['all'] | select('match', '^manager') | map('extract', hostvars, ['ansible_host']) | list | first }}"
   tasks:
-    - name: create dns for www.regshort.com
-      community.general.cloudflare_dns:
-        zone: "{{ root_dns }}"
-        type: CNAME
-        record: www
-        value: "{{ root_dns }}"
-        proxied: true
-        api_token: "{{ cloudflare_api_token }}"
 
-    - name: create dns for status
+    - name: Create dns for sw.{{ root_dns }}
       community.general.cloudflare_dns:
         zone: "{{ root_dns }}"
-        type: CNAME
-        record: status
-        value: statuspage.betteruptime.com
+        record: "{{ swarm_subdomain }}"
+        type: A
+        value: "{{ manager_pub }}"
+        api_token: "{{ cloudflare_api_token }}"
+        solo: true
         proxied: false
-        api_token: "{{ cloudflare_api_token }}"
 
-    - name: create dns for regshort.com
+    - name: Create dns for *sw.{{ root_dns }}
       community.general.cloudflare_dns:
         zone: "{{ root_dns }}"
-        record: "{{ root_dns }}"
-        type: A
-        value: "{{ web_pub }}"
+        record: "*.sw"
+        type: CNAME
+        value: "{{ swarm_subdomain }}.{{ root_dns }}"
         api_token: "{{ cloudflare_api_token }}"
         solo: true
-        proxied: true
+        proxied: false
 
-    - name: create dns for docs.regshort.com
-      community.general.cloudflare_dns:
-        zone: "{{ root_dns }}"
-        record: "{{ docs_subdomain }}"
-        type: A
-        value: "{{ web_pub }}"
-        api_token: "{{ cloudflare_api_token }}"
-        solo: true
-        proxied: true
-
-    - name: create dns for terminal.regshort.com
-      community.general.cloudflare_dns:
-        zone: "{{ root_dns }}"
-        record: "{{ terminal_subdomain }}"
-        type: A
-        value: "{{ web_pub }}"
-        api_token: "{{ cloudflare_api_token }}"
-        solo: true
-        proxied: true
-
-    - name: create dns for ws.regshort.com
-      community.general.cloudflare_dns:
-        zone: "{{ root_dns }}"
-        record: "{{ streamer_subdomain }}"
-        type: A
-        value: "{{ str_pub }}"
-        api_token: "{{ cloudflare_api_token }}"
-        solo: true
-        proxied: true

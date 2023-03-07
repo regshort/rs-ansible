@@ -1,11 +1,10 @@
 ---
-- name: wait for server
+- name: Wait for server
+  hosts: all
   vars_files:
     - "../vars/index.yml"
   remote_user: root
   gather_facts: false
-  strategy: free
-  hosts: all
   tasks:
     - name: Wait for the reboot and reconnect
       wait_for:
@@ -14,3 +13,4 @@
         search_regex: OpenSSH
         timeout: 1000
       connection: local
+

@@ -1,0 +1,28 @@
+---
+- name: Install gluster server
+  hosts: data*
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/glusterfs.yml"
+  remote_user: "{{ username }}"
+  become: true
+  roles:
+    - geerlingguy.glusterfs
+  tasks:
+    - name: Find HC_Volume_* folders in /mnt/
+      ansible.builtin.find:
+        paths: /mnt/
+        file_type: directory
+        patterns: HC_Volume_*
+      register: found_folders
+
+    - name: Create gluster volume
+      gluster.gluster.gluster_volume:
+        state: present
+        name: volume-01
+        bricks: /mnt/{{ found_folders.files[0].path | basename }}/gluster-storage
+        start_on_create: true
+        force: true
+        cluster:
+          - 'data-01'
+      become: true

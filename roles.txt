@@ -1,0 +1,9 @@
+ /home/g99/Git/rs-ansible-swarm/roles
+- geerlingguy.docker, 6.1.0
+- robertdebock.cargo, 3.1.3
+- geerlingguy.pip, 2.2.0
+- jetune.glusterfs_client, 1.0.1
+- portainer, (unknown version)
+- geerlingguy.glusterfs, 3.1.2
+- geerlingguy.nodejs, 6.1.1
+- gantsign.ctop, 1.1.6

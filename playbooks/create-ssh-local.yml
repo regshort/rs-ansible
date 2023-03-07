@@ -13,7 +13,7 @@
 
     - name: Copy to old so we dont overwrite running keys
       community.general.archive:
-        path: "../ssh/"
+        path: "../ssh/id_rsa.*"
         dest: "../ssh/old-{{ ansible_date_time.iso8601_basic }}.tgz"
         mode: '700'
       when: register_name.stat.exists

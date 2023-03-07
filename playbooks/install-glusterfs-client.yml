@@ -1,0 +1,31 @@
+---
+- name: Install gluster client
+  hosts: all,!data*
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  become: true
+  roles:
+    - jetune.glusterfs_client
+  tasks:
+    - name: Create /mnt/storage-pool directory
+      ansible.builtin.file:
+        path: /mnt/storage-pool
+        state: directory
+        mode: '0644'
+
+    - name: Append mount to /etc/fstab for persistent mount
+      ansible.builtin.lineinfile:
+        path: /etc/fstab
+        line: "data-01:/volume-01 /mnt/storage-pool glusterfs defaults,_netdev,x-systemd.automount 0 0"
+
+    - name: Test fstab with mount -a command
+      ansible.builtin.command: mount -a
+
+    - name: List contents of /mnt/storage-pool/
+      ansible.builtin.command: ls /mnt/storage-pool/
+      register: ls_output
+
+    - name: Display contents of /mnt/storage-pool/
+      ansible.builtin.debug:
+        var: ls_output.stdout_lines

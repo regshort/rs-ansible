@@ -1,0 +1,28 @@
+---
+- name: Setup minio
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    # - name: Rnsures /mnt/storage-pool/minio exists
+    #   ansible.builtin.file:
+    #     path: "/mnt/storage-pool/minio"
+    #     state: directory
+    #     mode: '0777'
+    #   become: true
+
+    - name: Copy minio stack config
+      ansible.builtin.copy:
+        src: "../apps/minio/minio-stack.yml"
+        dest: ~/minio-stack.yml
+        owner: "{{ username }}"
+        mode: '0644'
+
+    - name: Start minio
+      ansible.builtin.command:
+        cmd:  docker stack deploy -c /home/swarm/minio-stack.yml minio 
+      become: true
+

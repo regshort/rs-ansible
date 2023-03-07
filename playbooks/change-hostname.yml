@@ -4,7 +4,7 @@
   gather_facts: true
   remote_user: root
   vars:
-    new_hostname: "{{ inventory_hostname | regex_replace('^([^-]+-[^-]+).*', '\\1') }}{{ ansible_default_ipv4.address.split('.')[-1] }}"
+    new_hostname: "{{ inventory_hostname.split('-')[:2] | join('-') }}"
   strategy: free
   tasks:
     - name: Save old Hostname

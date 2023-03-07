@@ -8,7 +8,7 @@
     - "../vars/sensitive.yml"
 
   vars:
-    new_password: "{{ username }}-{{ inventory_hostname.split('-')[1] }}{{ password_seed }}"
+    new_password: "{{ username }}-{{ inventory_hostname.split('-')[:2] | join('-') }}{{ password_seed }}"
   strategy: free
 
   tasks:

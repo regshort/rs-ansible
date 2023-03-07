@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  diun:
+    image: crazymax/diun:latest
+    command: serve
+    volumes:
+      - /mnt/storage-pool/diun:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      TZ: Europe/Paris
+      DIUN_WATCH_SCHEDULE: 0 */6 * * *
+      DIUN_PROVIDERS_SWARM: 'true'
+      DIUN_PROVIDERS_SWARM_WATCHBYDEFAULT: 'true'
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+  cronjob:
+    image: crazymax/swarm-cronjob
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      TZ: Europe/Paris
+      LOG_LEVEL: info
+      LOG_JSON: 'false'
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager

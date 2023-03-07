@@ -1,0 +1,37 @@
+---
+- name: Initiate Swarm on manager
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  vars:
+    manager_priv: "{{ groups['all'] | select('match', '^manager') | map('extract', hostvars, ['private_ipv4']) | list | first }}"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Init a new swarm with default parameters
+      ansible.builtin.command:
+        cmd: docker swarm init --advertise-addr {{ manager_priv }}
+      become: true
+
+    # - name: Get join command
+    #   ansible.builtin.command:
+    #     cmd: docker swarm join-token worker
+    #   become: true
+    #   register: joincmd
+
+    # - name: Write join token in pool
+    #   copy:
+    #     dest: "/mnt/storage-pool/join.txt"
+    #     content: |
+    #       {{ joincmd.stdout.split('--token ') | last | split(' ') | first }}
+    #   become: true
+
+# docker swarm join --token SWMTKN-1-5sh1afhopec7e56nlmq5n86abscxllr0c44on1h6wtiulkc0gy-cb991mt3q18k8oualt2ictm0d 10.0.0.2:2377
+    # - name: Join Swarm
+    #   ansible.builtin.command:
+    #     cmd: docker swarm join --token {{ joincmd.stdout.split('--token ') | last | split(' ') | first }} {{ manager_priv }}:2377
+    #   become: true
+    #   delegate_to: "{{ item.key }}"
+    #   when: 
+    #   loop: "{{ hostvars | dict2items }}"

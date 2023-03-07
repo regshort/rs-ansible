@@ -1,0 +1,23 @@
+---
+- name: Install Docker
+  hosts: all,!data*
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/docker.yml"
+  remote_user: "{{ username }}"
+  become: true
+  roles:
+    - geerlingguy.docker
+    - gantsign.ctop
+  tasks:
+    - name: Install containerd.io docker-compose-plugin
+      ansible.builtin.apt:
+        pkg:
+          - containerd.io
+          - docker-compose-plugin
+
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true

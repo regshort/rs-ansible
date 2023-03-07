@@ -1,0 +1,28 @@
+---
+- name: Initiate Swarm on manager
+  hosts: all,!data*,!manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  vars:
+    manager_priv: "{{ groups['all'] | select('match', '^manager') | map('extract', hostvars, ['private_ipv4']) | list | first }}"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Get join command
+      ansible.builtin.command:
+        cmd: docker swarm join-token worker
+      become: true
+      register: joincmd
+      delegate_to: "{{ groups['all'] | select('match', '^manager') | map('extract', hostvars, ['ipv4']) | list | first }}"
+
+    - name: Join Swarm
+      ansible.builtin.command:
+        cmd: docker swarm join --token {{ joincmd.stdout.split('--token ') | last | split(' ') | first }} {{ manager_priv }}:2377
+      become: true
+      
+    - name: Add tag to hosts
+      ansible.builtin.command:
+        cmd: docker node update --label-add environment=production {{ inventory_hostname.split('-')[:2] | join('-') }}
+      become: true
+      delegate_to: "{{ groups['all'] | select('match', '^manager') | map('extract', hostvars, ['ipv4']) | list | first }}"

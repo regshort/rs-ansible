@@ -1,0 +1,27 @@
+---
+- name: Setup maintenance
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Rnsures /mnt/storage-pool/diun exists
+      ansible.builtin.file:
+        path: "/mnt/storage-pool/diun"
+        state: directory
+        mode: '0744'
+      become: true
+
+    - name: Copy maintenance stack config
+      ansible.builtin.copy:
+        src: "../apps/maintenance/maintenance-stack.yml"
+        dest: ~/maintenance-stack.yml
+        owner: "{{ username }}"
+        mode: '0644'
+
+    - name: Start maintenance
+      ansible.builtin.command:
+        cmd: docker stack deploy -c /home/swarm/maintenance-stack.yml diun
+      become: true

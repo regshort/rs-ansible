@@ -1,30 +1,18 @@
 ---
-- name: setup back
-  hosts: localhost
+- name: Setup back
+  hosts: manager*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
     - "../vars/sensitive.yml"
   remote_user: "{{ username }}"
   tasks:
-    # - name: Loop over volumes
-    #   hetzner.hcloud.hcloud_volume:
-    #     name: "{{ item.key }}"
-    #     size: "{{ item.value.size }}"
-    #     server: "{{ groups['all'] | select('match', '^' + item.value.server) | map('extract', hostvars, ['name']) | list | first }}"
-    #     automount: yes
-    #     format: ext4
-    #     state: present
-    #     api_token: "{{ hetzner_api_token }}"
-    #   with_dict: "{{ volumes_to_make }}"
+    - name: Generate encrypted password
+      shell: openssl passwd -apr1 only4you
+      register: encrypted_password
 
-    - name: Loop over volumes
-      hetzner.hcloud.hcloud_volume:
-        name: "{{ item.key }}"
-        size: "{{ item.value.size }}"
-        server: "{{ groups['all'] | select('match', '^' + item.value.server) | map('extract', hostvars, ['name']) | list | first }}"
-        automount: yes
-        format: ext4
-        state: present
-        api_token: "{{ hetzner_api_token }}"
-      with_dict: "{{ volumes_to_make }}"
+    - name: Start traefik
+      ansible.builtin.command:
+        cmd: docker stack deploy -c ~/traefik-stack.yml traefik
+      environment:
+        HASHED_PASSWORD: "{{ encrypted_password.stdout }}"
