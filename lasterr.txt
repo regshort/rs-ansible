@@ -1,0 +1,20 @@
+PLAY [Setup traefik] ***************************************************************************
+
+TASK [Rnsures etc/traefik exists] **************************************************************
+changed: [manager-01-47c324ae-e87b-5624-ba26-420a3bf53583]
+
+TASK [Copy traefik config] *********************************************************************
+changed: [manager-01-47c324ae-e87b-5624-ba26-420a3bf53583]
+
+TASK [Rnsures /mnt/storage-pool/certs exists] **************************************************
+changed: [manager-01-47c324ae-e87b-5624-ba26-420a3bf53583]
+
+TASK [Copy certs] ******************************************************************************
+changed: [manager-01-47c324ae-e87b-5624-ba26-420a3bf53583]
+
+TASK [Copy traefik stack config] ***************************************************************
+changed: [manager-01-47c324ae-e87b-5624-ba26-420a3bf53583]
+
+TASK [Replace node labels with new labels] *****************************************************
+fatal: [manager-01-47c324ae-e87b-5624-ba26-420a3bf53583]: FAILED! => changed=false 
+  msg: 'Failed to update node : 400 Client Error for http+docker://localhost/v1.42/nodes/7g7dpiwf41ruoubropcq6ufl3/update?version=23: Bad Request ("invalid JSON: json: cannot unmarshal bool into Go struct field NodeSpec.Labels of type string")'

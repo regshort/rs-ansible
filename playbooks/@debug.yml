@@ -7,12 +7,11 @@
     - "../vars/sensitive.yml"
   remote_user: "{{ username }}"
   tasks:
-    - name: Generate encrypted password
-      shell: openssl passwd -apr1 only4you
-      register: encrypted_password
-
-    - name: Start traefik
-      ansible.builtin.command:
-        cmd: docker stack deploy -c ~/traefik-stack.yml traefik
-      environment:
-        HASHED_PASSWORD: "{{ encrypted_password.stdout }}"
+    - name: Create /mnt/storage-pool directory
+      ansible.builtin.file:
+        path: /mnt/storage-pool
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+      become: true

@@ -10,8 +10,6 @@
 - import_playbook: change-hostname.yml # change hostname
 - import_playbook: create-user.yml # create new user from vars with password build from vars
 - import_playbook: ssh-to-box.yml # copy the ssh key to the new user so we can connect to it
-- import_playbook: ssh-hardening.yml # disable ssh login stuff
-- import_playbook: fix-history.yml # fixes history
 
 # setup iptables
 # - import_playbook: setup-iptables-log.yml
@@ -26,11 +24,15 @@
 
 - import_playbook: install-glusterfs-server.yml
 - import_playbook: install-glusterfs-client.yml
+- import_playbook: setup-glusterfs-client.yml
 - import_playbook: install-docker.yml
 - import_playbook: initiate-swarm.yml
 - import_playbook: join-swarm.yml
 - import_playbook: fix-swarm-network.yml
 - import_playbook: update-dns.yml
+
+- import_playbook: install-postgres-and-dbs.yml
+- import_playbook: setup-relic.yml
 
 - import_playbook: setup-traefik.yml
 - import_playbook: setup-portainer.yml

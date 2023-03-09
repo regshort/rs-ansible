@@ -25,4 +25,18 @@
         force: true
         cluster:
           - 'data-01'
+        options:
+          { performance.quick-read: 'off',
+            performance.read-ahead: 'off',
+            performance.io-cache: 'off',
+            performance.stat-prefetch: 'off',
+            network.remote-dio: 'enable',
+            cluster.eager-lock: 'enable',
+            cluster.quorum-type: 'auto',
+            cluster.server-quorum-type: 'server',
+            cluster.data-self-heal-algorithm: 'full',
+            cluster.locking-scheme: 'granular',
+            features.shard: 'on',
+            user.cifs: 'off',
+          }
       become: true

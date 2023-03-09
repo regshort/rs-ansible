@@ -13,11 +13,18 @@
 
   tasks:
     - name: Creating user with admin access
-      user:
+      ansible.builtin.user:
         name: "{{ username }}"
         password: "{{ new_password | password_hash('sha512') }}"
         shell: /bin/bash
-    - name: Add user "{{ username }}" to sudo
+
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: "{{ username }}"
+        groups: sudo
+        append: true
+        
+    - name: Add user to docker group
       lineinfile:
         path: /etc/sudoers.d/{{ username }}
         line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
@@ -25,6 +32,7 @@
         create: true
         mode: 0440
         validate: "visudo -cf %s"
+
     - name: Set includedir in sudoers
       lineinfile:
         dest: /etc/sudoers

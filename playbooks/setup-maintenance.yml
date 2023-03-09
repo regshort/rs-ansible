@@ -12,6 +12,8 @@
         path: "/mnt/storage-pool/diun"
         state: directory
         mode: '0744'
+        owner: "{{ username }}"
+        group: "{{ username }}"
       become: true
 
     - name: Copy maintenance stack config
@@ -19,9 +21,12 @@
         src: "../apps/maintenance/maintenance-stack.yml"
         dest: ~/maintenance-stack.yml
         owner: "{{ username }}"
-        mode: '0644'
+        group: "{{ username }}"
+        mode: '0744'
 
-    - name: Start maintenance
-      ansible.builtin.command:
-        cmd: docker stack deploy -c /home/swarm/maintenance-stack.yml diun
-      become: true
+    - name: Deploy maintenance stack from a compose file
+      community.docker.docker_stack:
+        state: present
+        name: diun
+        compose:
+          - /home/swarm/maintenance-stack.yml

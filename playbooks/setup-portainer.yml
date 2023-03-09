@@ -11,6 +11,9 @@
       ansible.builtin.file:
         path: "/mnt/storage-pool/portainer"
         state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
       become: true
 
     - name: Copy portainer stack config
@@ -18,9 +21,17 @@
         src: "../apps/portainer/portainer-agent-stack.yml"
         dest: ~/portainer-agent-stack.yml
         owner: "{{ username }}"
-        mode: '0644'
+        group: "{{ username }}"
+        mode: '0744'
 
-    - name: Start portainer
-      ansible.builtin.command:
-        cmd: docker stack deploy -c /home/swarm/portainer-agent-stack.yml portainer
-      become: true
+    # - name: Start portainer
+    #   ansible.builtin.command:
+    #     cmd: docker stack deploy -c /home/swarm/portainer-agent-stack.yml portainer
+    #   become: true
+
+    - name: Deploy stack from a compose file
+      community.docker.docker_stack:
+        state: present
+        name: portainer
+        compose:
+          - /home/swarm/portainer-agent-stack.yml

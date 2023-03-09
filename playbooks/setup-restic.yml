@@ -1,0 +1,21 @@
+---
+- name: Setup relic 
+  hosts: data*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  roles:
+  - restic
+  vars:
+    restic_ssh_enabled: false
+    restic_repository: "s3:144.2.122.21/daddy/backup"
+    restic_aws_access_key_id: Wh9JOxmObFNtZiFG
+    restic_aws_secret_access_key: j0XqyWcvmbqYm2mJteQfAutqkCIpaLsO
+    restic_folders:
+    - {path: "/mnt/HC_Volume_*/gluster-storage"}
+    restic_databases:
+    - {name: frontdb, dump_command: "sudo -Hiu postgres pg_dump -Fc front"}
+    - {name: frontdb, dump_command: sudo -Hiu postgres pg_dump -Fc back}
+    restic_password: mysuperduperpassword  

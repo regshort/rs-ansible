@@ -14,7 +14,27 @@
           (?i)are you sure you want to continue?: y
       become: true
 
+    - name: Remove a network
+      community.docker.docker_network:
+        name: ingress
+        state: absent
+        force: true
+
+    - name: Remove a network
+      community.docker.docker_network:
+        name: ingress
+        state: present
+        force: true
+
     - name: Re add ingress network
-      ansible.builtin.command:
-        cmd: docker network create -d overlay --ingress --opt com.docker.network.driver.mtu=1450 ingress
-      become: true
+      docker_network:
+        name: ingress
+        driver: overlay
+        driver_options:
+          com.docker.network.driver.mtu: 1450
+        state: present
+        
+    # - name: Re add ingress network
+    #   ansible.builtin.command:
+    #     cmd: docker network create -d overlay --ingress --opt com.docker.network.driver.mtu=1450 ingress
+    #   become: true

@@ -50,7 +50,7 @@
     - name: "Grant db user access to app db"
       postgresql_privs:
         type: database
-        database: "{{ username }}{{ item }}"
+        database: "{{ item }}"
         roles: "{{ username }}"
         privs: all
       become_user: postgres

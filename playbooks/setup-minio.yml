@@ -7,22 +7,27 @@
   remote_user: "{{ username }}"
 
   tasks:
-    # - name: Rnsures /mnt/storage-pool/minio exists
-    #   ansible.builtin.file:
-    #     path: "/mnt/storage-pool/minio"
-    #     state: directory
-    #     mode: '0777'
-    #   become: true
+
+    - name: Create /mnt/storage-pool/minio directory
+      ansible.builtin.file:
+        path: /mnt/storage-pool/minio
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+      become: true
 
     - name: Copy minio stack config
       ansible.builtin.copy:
         src: "../apps/minio/minio-stack.yml"
         dest: ~/minio-stack.yml
         owner: "{{ username }}"
-        mode: '0644'
+        group: "{{ username }}"
+        mode: '0744'
 
-    - name: Start minio
-      ansible.builtin.command:
-        cmd:  docker stack deploy -c /home/swarm/minio-stack.yml minio 
-      become: true
-
+    - name: Deploy maintenance stack from a compose file
+      community.docker.docker_stack:
+        state: present
+        name: minio
+        compose:
+          - /home/swarm/minio-stack.yml

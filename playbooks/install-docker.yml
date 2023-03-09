@@ -15,9 +15,21 @@
         pkg:
           - containerd.io
           - docker-compose-plugin
+          - python3-docker
+          - python3-pip
+
+    - name: Install multi python packages with version specifiers
+      ansible.builtin.pip:
+        name:
+          - jsondiff
+          - pyyaml
 
     - name: Add user to docker group
       ansible.builtin.user:
-        name: "{{ ansible_user }}"
+        name: "{{ username }}"
         groups: docker
-        append: true
+      become: true
+
+    - name: Reset ssh connection to allow user changes to affect ansible user
+      ansible.builtin.meta:
+        reset_connection
