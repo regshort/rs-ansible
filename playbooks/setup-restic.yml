@@ -1,21 +1,20 @@
 ---
-- name: Setup relic 
+- name: Setup restic
   hosts: data*
-  gather_facts: false
   vars_files:
     - "../vars/index.yml"
   remote_user: "{{ username }}"
-
+  become: true
   roles:
-  - restic
+    - restic
   vars:
     restic_ssh_enabled: false
-    restic_repository: "s3:144.2.122.21/daddy/backup"
-    restic_aws_access_key_id: Wh9JOxmObFNtZiFG
-    restic_aws_secret_access_key: j0XqyWcvmbqYm2mJteQfAutqkCIpaLsO
+    restic_repository: "s3:https://regshort.fra1.digitaloceanspaces.com/daddy/backup"
+    restic_aws_access_key_id: DO00LDAG98HRGYN47E3X
+    restic_aws_secret_access_key: 9UinsHqscj5gwgsyf53sIk9UaCXX9BbVDnUcN00c6jU
     restic_folders:
-    - {path: "/mnt/HC_Volume_*/gluster-storage"}
+      - {path: "/mnt/HC_Volume_*/gluster-storage"}
     restic_databases:
-    - {name: frontdb, dump_command: "sudo -Hiu postgres pg_dump -Fc front"}
-    - {name: frontdb, dump_command: sudo -Hiu postgres pg_dump -Fc back}
-    restic_password: mysuperduperpassword  
+      - {name: frontdb, dump_command: "sudo -Hiu postgres pg_dump -Fc front"}
+      - {name: frontdb, dump_command: sudo -Hiu postgres pg_dump -Fc back}
+    restic_password: mysuperduperpassword

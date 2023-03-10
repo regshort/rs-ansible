@@ -1,0 +1,11 @@
+[Unit]
+Description=Loki
+After=network.target
+
+[Service]
+Type=simple
+User=swarm
+ExecStart=/usr/local/bin/loki -config.file=/etc/loki/loki-local-config.yaml
+
+[Install]
+WantedBy=multi-user.target

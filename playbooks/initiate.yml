@@ -2,8 +2,8 @@
 # check/wait for servers to be online
 # INITIATED
 # hosts: all
-
 - import_playbook: wait-for-servers.yml
+
 - import_playbook: change-default-sshport.yml
 - import_playbook: hetzner-create-volume.yml
 - import_playbook: change-root-password.yml # creates pw from vars with its hostname
@@ -28,16 +28,30 @@
 - import_playbook: install-docker.yml
 - import_playbook: initiate-swarm.yml
 - import_playbook: join-swarm.yml
+- import_playbook: join-swarm-runner.yml
 - import_playbook: fix-swarm-network.yml
 - import_playbook: update-dns.yml
 
 - import_playbook: install-postgres-and-dbs.yml
-- import_playbook: setup-relic.yml
+- import_playbook: install-node-exporter.yml
+- import_playbook: install-redis.yml
+- import_playbook: install-loki.yml
+
 
 - import_playbook: setup-traefik.yml
 - import_playbook: setup-portainer.yml
 - import_playbook: setup-maintenance.yml
 - import_playbook: setup-minio.yml
+
+- import_playbook: setup-restic.yml
+- import_playbook: setup-prometheus.yml
+- import_playbook: setup-grafana.yml
+- import_playbook: setup-loki-driver.yml
+- import_playbook: install-promtail.yml
+- import_playbook: setup-registry.yml
+- import_playbook: setup-drone.yml
+- import_playbook: setup-adminer.yml
+# - import_playbook: restart-servers.yml
 # - import_playbook: installandcopy-nginx-config.yml
 # # CLONE REPOS
 # # hosts: all

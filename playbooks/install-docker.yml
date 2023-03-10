@@ -30,6 +30,18 @@
         groups: docker
       become: true
 
+    - name: Enable docker.service service
+      ansible.builtin.systemd:
+        name: docker.service
+        enabled: true
+      become: true
+
+    - name: Enable containerd.service service
+      ansible.builtin.systemd:
+        name: containerd.service
+        enabled: true
+      become: true
+
     - name: Reset ssh connection to allow user changes to affect ansible user
       ansible.builtin.meta:
         reset_connection

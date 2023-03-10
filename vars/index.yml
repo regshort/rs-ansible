@@ -11,6 +11,8 @@ streamer_subdomain: ws
 database_to_make: # this will add the username before it {{ username }}{{ db }}
   - front
   - back
+  - grafana
+  - drone
 
 # HETZNER deploy settings
 hetzner_network_ip_range: 10.0.0.0/16
@@ -22,6 +24,11 @@ volumes_to_make:
       server: data-01
 hosts_to_make:
   manager-01:
+    server_type: cx21
+    image: ubuntu-22.04
+    location: nbg1-dc3
+
+  runner-01:
     server_type: cx21
     image: ubuntu-22.04
     location: nbg1-dc3

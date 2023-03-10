@@ -29,5 +29,7 @@ services:
 
 networks:
   agent_network:
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
   traefik_public:
     external: true

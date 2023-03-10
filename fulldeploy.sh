@@ -10,5 +10,5 @@ sleep 5
 # run server creation we need to split playbooks because of inventory 
 $ansible_cmd playbooks/hetzner_initiate.yml
 # this is the main playbook doing stuff on server
-sleep 30
+sleep 20
 $ansible_cmd playbooks/initiate.yml

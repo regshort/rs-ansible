@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  drone:
+    image: drone/drone:2
+    volumes:
+      - /etc/hosts:/etc/hosts
+    environment:
+      DRONE_DATABASE_DRIVER: postgres
+      DRONE_DATABASE_DATASOURCE: postgres://swarm:swarm@data-01:5432/drone?sslmode=disable
+      DRONE_GITHUB_CLIENT_ID: 38c0612aed2ae2f9beeb
+      DRONE_GITHUB_CLIENT_SECRET: a86bb62d604c2f1cd3ea6098f93f27b3b44d3941
+      DRONE_RPC_SECRET: ae3bbd5443acd95697a3a54cd6e472b4
+      DRONE_SERVER_HOST: drone.sw.frogtech.dev
+      DRONE_SERVER_PROTO: https
+      DRONE_USER_CREATE: admin:only4you,admin:true
+      DRONE_USER_FILTER: regshort
+    networks:
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.drone.entrypoints=https
+        - traefik.http.services.drone.loadbalancer.server.port=80
+      placement:
+        constraints:
+          - node.role == manager
+
+  runner-docker:
+    image: drone/drone-runner-docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      DRONE_RPC_SECRET: ae3bbd5443acd95697a3a54cd6e472b4
+      DRONE_RPC_HOST: drone.sw.frogtech.dev
+      DRONE_RPC_PROTO: https
+    networks:
+      - traefik_public
+    deploy:
+      placement:
+        constraints:
+          - node.labels.environment == build
+
+networks:
+  traefik_public:
+    external: true

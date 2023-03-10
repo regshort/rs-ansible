@@ -1,0 +1,87 @@
+---
+- name: Install loki
+  hosts: data*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Install unzip if not installed
+      ansible.builtin.apt:
+        name: unzip
+        state: present
+      become: true
+
+    - name: Download Loki binary from GitHub releases page
+      ansible.builtin.get_url:
+        url: https://github.com/grafana/loki/releases/download/v2.7.4/loki-linux-amd64.zip
+        dest: /tmp/loki-linux-amd64.zip
+        mode: '0744'
+      register: result
+      until: result is success
+      retries: 3
+      delay: 10
+
+    - name: Unzip Loki binary to /usr/local/bin/
+      ansible.builtin.unarchive:
+        src: /tmp/loki-linux-amd64.zip
+        dest: /usr/local/bin/
+        remote_src: true
+      become: true
+
+    - name: Set execute permission on Loki binary
+      ansible.builtin.file:
+        path: /usr/local/bin/loki-linux-amd64
+        mode: a+x
+      become: true
+
+    - name: Move Loki binary to /usr/local/bin/loki
+      ansible.builtin.command: mv /usr/local/bin/loki-linux-amd64 /usr/local/bin/loki
+      become: true
+
+    - name: Create directory for loki config
+      ansible.builtin.file:
+        path: /etc/loki
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+      become: true
+
+    - name: Download loki-local-config.yaml
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/grafana/loki/master/cmd/loki/loki-local-config.yaml
+        dest: /etc/loki/loki-local-config.yaml
+        mode: '0744'
+        owner: "{{ username }}"
+        group: "{{ username }}"
+      become: true
+
+    - name: Create directory for loki data storage
+      ansible.builtin.file:
+        path: /var/lib/loki
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+      become: true
+
+    - name: Copy local file to /etc/systemd/system/loki.service
+      ansible.builtin.copy:
+        src: "../configs/loki.service"
+        dest: /etc/systemd/system/loki.service
+        mode: '0744'
+      become: true
+
+    - name: Enable loki.service service
+      ansible.builtin.systemd:
+        name: loki.service
+        enabled: true
+      become: true
+
+    - name: Start loki.service service
+      ansible.builtin.systemd:
+        name: loki.service
+        state: started
+      become: true

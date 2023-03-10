@@ -1,6 +1,6 @@
 ---
 - name: Join Swarm on all but manager, data & runner
-  hosts: all,!data*,!manager*
+  hosts: runner*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
@@ -31,7 +31,7 @@
       community.docker.docker_node:
         hostname: "{{ inventory_hostname.split('-')[:2] | join('-') }}"
         labels:
-          environment: "production"
+          environment: "build"
         labels_state: merge
       delegate_to: "{{ groups['all'] | select('match', '^manager') | map('extract', hostvars, ['ipv4']) | list | first }}"
 

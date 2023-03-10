@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    networks:
+      - private
+      - traefik_public
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.size=5GB
+      - --storage.tsdb.retention.time=15d
+    volumes:
+      - /etc/hosts:/etc/hosts
+      - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - data:/prometheus
+    deploy:
+      placement:
+        constraints:
+          - node.labels.prometheus.data == true
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.prometheus.entrypoints=https
+        - traefik.http.routers.prometheus.middlewares=admin-auth
+        - traefik.http.services.prometheus.loadbalancer.server.port=9090
+      
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.39.3
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - private
+    command:
+      - --docker_only
+      - --housekeeping_interval=5s
+      - --disable_metrics=disk,diskIO,tcp,udp,percpu,sched,process
+    deploy:
+      mode: global
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    environment:
+      - NODE_ID={{.Node.ID}}
+    networks:
+      - private
+    volumes:
+      - /:/host:ro,rslave
+      - /etc/hostname:/etc/nodename
+    command:
+      - --collector.textfile.directory=/home
+    configs:
+      - source: node_exporter_entrypoint
+        target: /docker-entrypoint.sh
+    entrypoint:
+      - /bin/sh
+      - /docker-entrypoint.sh
+    deploy:
+      mode: global
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    environment:
+      DATA_SOURCE_URI: data-01:5432/postgres?sslmode=disable
+      DATA_SOURCE_USER: swarm
+      DATA_SOURCE_PASS: swarm
+    networks:
+      - private
+    volumes:
+      - /etc/hosts:/etc/hosts
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+networks:
+  private:
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
+  traefik_public:
+    external: true
+configs:
+  node_exporter_entrypoint:
+    external: true
+volumes:
+  data:

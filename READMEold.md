@@ -1,65 +1,8 @@
-# Swarm
+# Ansible
 
-We followed mostly [this blog post](https://blog.okami101.io/2022/02/setup-a-docker-swarm-cluster-part-ii-hetzner-cloud-nfs/#create-the-cloud-servers-and-networks-
-)
-### Info
-- `docker service ls` on `manager` to see running services
-- `traefik.sw.x.x` also shows all 
-- `docker stack deploy -c portainer-agent-stack.yml portainer` to deploy a stack on swarm
-This basically builds a full stack with docker.
-- Glusterfs for storage.
-  - echo "data-01:/volume-01 /mnt/storage-pool glusterfs defaults,_netdev,x-systemd.automount 0 0" | sudo tee -a /etc/fstab install-gluster-client.yml
-- Docker swarm
-  - manager is box that orchestrates everything
-- Restic backups
-  - `setup-restic.yml` has config (TODO)
-- Prometheus, Grafana, Loki
-  - Data Sources:
-    - `http://prometheus:9090`: Prometheus
-    - `http://data-01:3100`: Loki
-  - Dashboards:
-    - Prometheus:
-      - `11939`: Docker Swarm dashboard
-      - `1860`: For Node exporter
-      - `9628`: For PostgreSQL exporter
-    - Loki:
-      - `{swarm_stack="$stack"}` query, log view
-      - define `stack` with Prometheus, query: `label_values(container_last_seen, container_label_com_docker_stack_namespace)`
-      - now you have a log view with drop down
-- Postgres, Redis, s3
-- All on `data` (todo login)
-- Adminer to see database for deving
-- DB dump is made from `setup-restic.yml`
+https://blog.okami101.io/2022/02/setup-a-docker-swarm-cluster-part-ii-hetzner-cloud-nfs/#create-the-cloud-servers-and-networks-
 
-#### Grafana note:
-The Available Disk Space metrics card should indicate N/A because not properly configured for Hetzner disks. Just edit the card and change the PromQL inside Metrics browser field by replacing device="rootfs", mountpoint="/" by device="/dev/sda1", mountpoint="/host".
 
-### TODO
-- Template our stack files and config files so ansible can fill them
-- Password and secrets (vault)
-- Node Tags
-  - production (webworker, streamworker)
-  - build (cicd)
-- Deploy as code
-  - cicd
-  - grafana
-- Hardening all
-- Backups (not working atm)
-
-### cron template
-
-more info [here](https://blog.okami101.io/2022/02/setup-a-docker-swarm-cluster-part-iii-cluster-initialization/#distributed-cron-jobs-)
-
-```yaml
-    deploy:
-      labels:
-        - swarm.cronjob.enable=true
-        - swarm.cronjob.schedule=5 * * * *
-        - swarm.cronjob.skip-running=true
-      replicas: 0
-      restart_policy:
-        condition: none
-```
 
 
 We should probably make `containers` for each repo so we do not need to care about installing repos and only need to do initiation

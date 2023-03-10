@@ -1,0 +1,26 @@
+---
+- name: Setup drone
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+  ### we need to add this config to manager
+
+    - name: Copy drone stack config
+      ansible.builtin.copy:
+        src: "../apps/drone/drone-stack.yml"
+        dest: ~/drone-stack.yml
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0644'
+
+
+    - name: Deploy stack from a compose file
+      community.docker.docker_stack:
+        state: present
+        name: drone
+        compose:
+          - /home/swarm/drone-stack.yml

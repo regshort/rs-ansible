@@ -58,7 +58,7 @@
         labels_state: merge
 
     - name: Generate encrypted password
-      shell: openssl passwd -apr1 only4you
+      ansible.builtin.shell: openssl passwd -apr1 only4you
       register: encrypted_password
 
     - name: Deploy stack from a compose file

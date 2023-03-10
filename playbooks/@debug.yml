@@ -1,17 +1,16 @@
 ---
 - name: Setup back
-  hosts: manager*
+  hosts: localhost
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
     - "../vars/sensitive.yml"
   remote_user: "{{ username }}"
   tasks:
-    - name: Create /mnt/storage-pool directory
-      ansible.builtin.file:
-        path: /mnt/storage-pool
-        state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
-        mode: '0744'
-      become: true
+    - name: basic upload
+      community.aws.s3_sync:
+        bucket: regshort
+        endpoint_url: https://regshort.fra1.digitaloceanspaces.com
+        file_root: '../upload/test.txt'
+        aws_access_key_id: DO00LDAG98HRGYN47E3X
+        aws_secret_access_key: 9UinsHqscj5gwgsyf53sIk9UaCXX9BbVDnUcN00c6jU

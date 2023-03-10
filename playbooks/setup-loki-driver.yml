@@ -1,0 +1,27 @@
+---
+- name: Setup loki driver
+  hosts: all, !data*
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Install Docker plugin
+      community.docker.docker_plugin:
+        plugin_name: grafana/loki-docker-driver:latest
+        alias: loki
+        state: enable
+
+    - name: Copy docker config
+      ansible.builtin.copy:
+        src: "../configs/daemon.json"
+        dest: /etc/docker/daemon.json
+        mode: '0744'
+      become: true
+
+    - name: Restart Docker service
+      become: true
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+
