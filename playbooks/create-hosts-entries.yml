@@ -13,4 +13,5 @@
         path: /etc/hosts
         line: "{{ item.value.private_ipv4 }} {{ item.key.split('-')[0] }}-{{ item.key.split('-')[1] }} {{ swarm_sd }}-{{ item.key.split('-')[0] }}-{{ item.key.split('-')[1] }}"
         state: present
+      no_log: true
       with_items: "{{ hostvars | dict2items }}"
