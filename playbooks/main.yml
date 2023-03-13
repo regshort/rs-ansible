@@ -3,7 +3,6 @@
 # INITIATED
 # hosts: all
 - import_playbook: wait-for-servers.yml
-
 - import_playbook: change-default-sshport.yml
 - import_playbook: hetzner-create-volume.yml
 - import_playbook: change-root-password.yml # creates pw from vars with its hostname
@@ -42,16 +41,15 @@
 - import_playbook: install-postgres-and-dbs.yml
 - import_playbook: install-node-exporter.yml
 - import_playbook: install-redis.yml
-# - import_playbook: install-loki.yml
-# - import_playbook: install-promtail.yml
+- import_playbook: install-loki.yml
+- import_playbook: install-promtail.yml
 
 # SETUP BINARY
 - import_playbook: setup-restic.yml
-# - import_playbook: setup-loki-driver.yml
+- import_playbook: setup-loki-driver.yml
 
 # SETUP STACK
 - import_playbook: setup-traefik.yml
-
 - import_playbook: setup-portainer.yml
 - import_playbook: setup-maintenance.yml
 - import_playbook: setup-minio.yml
@@ -59,7 +57,18 @@
 - import_playbook: setup-grafana.yml
 - import_playbook: setup-drone.yml
 - import_playbook: setup-adminer.yml
+ 
 
 # REGISTRY (needs to be after traefik because of network FIXME)
 - import_playbook: setup-registry.yml
 - import_playbook: login-registry.yml
+
+# TODO: RUNNER NEEDS TO BE ABLE TO ACCESS GITHUB TO CLONE REPOS TO BUILD IMAGES
+
+# # SETUP RSWEB
+# - import_playbook: setup-rsweb-buld.yml
+# - import_playbook: setup-rsweb.yml
+
+# # SETUP RSTERMINAL
+# - import_playbook: setup-rsterminal-buld.yml
+# - import_playbook: setup-rsterminal.yml

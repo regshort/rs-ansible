@@ -1,0 +1,26 @@
+---
+- name: Setup rsweb build
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ unix_user }}"
+  tasks:
+    - name: Clone repos
+      ansible.builtin.git:
+        key_file: ~/.ssh/id_rsa
+        repo: git@github.com:regshort/rs-terminal.git
+        dest: "/tmp/rs-terminal"
+        version: main
+        accept_hostkey: true
+
+    - name: Build an image and push it to a private repo
+      community.docker.docker_image:
+        build:
+          path: /tmp/rs-terminal
+          dockerfile: Dockerfile.standalone
+        name: "{{ registry_sd }}.{{ swarm_sd }}.{{ root_dns }}/rs-terminal"
+        tag: latest
+        push: true
+        source: build
+      become: true

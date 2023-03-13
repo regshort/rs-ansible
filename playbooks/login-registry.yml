@@ -1,6 +1,6 @@
 ---
 - name: Login registry
-  hosts: all,!data*
+  hosts: all, localhost, !data*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"

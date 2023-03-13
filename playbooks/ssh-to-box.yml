@@ -1,6 +1,6 @@
 ---
 - name: Copying ssh key and updating sudoers
-  hosts: all
+  hosts: manager*
   vars_files:
     - "../vars/index.yml"
 
