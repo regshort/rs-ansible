@@ -1,0 +1,35 @@
+---
+- name: Setup registry
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+  ### we need to add this config to manage
+    - name: Copy registry stack config
+      ansible.builtin.copy:
+        src: "../apps/registry/registry-stack.yml"
+        dest: ~/registry-stack.yml
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0644'
+
+    - name: Rnsures /mnt/storage-pool/registry exists
+      ansible.builtin.file:
+        path: "/mnt/storage-pool/registry"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: "0744"
+      become: true
+
+    - name: Deploy adminer stack from a compose file
+      community.docker.docker_stack:
+        state: present
+        name: registry
+        compose:
+          - /home/swarm/registry-stack.yml
+
+

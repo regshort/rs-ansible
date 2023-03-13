@@ -4,7 +4,8 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+    - "../vars/sensitive-apps.yml"
+  remote_user: "{{ unix_user }}"
 
   tasks:
     - name: Rnsures etc/traefik exists
@@ -14,19 +15,21 @@
         mode: "0744"
       become: true
 
-    - name: Copy traefik config
-      ansible.builtin.copy:
-        src: "../apps/traefik/traefik.yml"
+    - name: Create config from template
+      ansible.builtin.template:
+        src: "../apps/traefik/traefik.yml.j2"
         dest: /etc/traefik/traefik.yml
         mode: '0644'
+      vars:
+        traefik_domain: "{{ swarm_sd }}.{{ root_dns }}"
       become: true
-
+      
     - name: Rnsures /mnt/storage-pool/certs exists
       ansible.builtin.file:
         path: "/mnt/storage-pool/certs"
         state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: "0744"
       become: true
 
@@ -34,16 +37,16 @@
       ansible.builtin.copy:
         src: "../certs/acme.json"
         dest: /mnt/storage-pool/certs/acme.json
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0600'
 
     - name: Copy traefik stack config
       ansible.builtin.copy:
         src: "../apps/traefik/traefik-stack.yml"
         dest: ~/traefik-stack.yml
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0644'
 
     # - name: Add tag to manager
@@ -58,8 +61,9 @@
         labels_state: merge
 
     - name: Generate encrypted password
-      ansible.builtin.shell: openssl passwd -apr1 only4you
+      ansible.builtin.command: openssl passwd -apr1 {{ admin_auth_pass }}
       register: encrypted_password
+      changed_when: encrypted_password.rc != 0
 
     - name: Deploy stack from a compose file
       community.docker.docker_stack:
@@ -69,3 +73,4 @@
           - /home/swarm/traefik-stack.yml
       environment:
         HASHED_PASSWORD: "{{ encrypted_password.stdout }}"
+        TR_USER: "{{ admin_auth_user }}"

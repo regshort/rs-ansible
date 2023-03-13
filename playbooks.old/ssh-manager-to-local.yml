@@ -1,0 +1,13 @@
+---
+- name: Copying ssh key from manager to runner
+  hosts: manager*
+  vars_files:
+    - "../vars/index.yml"
+  gather_facts: false
+  remote_user: "{{ username }}"
+  tasks:
+    - name: Copy keys to runner
+      fetch:
+        src: "~/.ssh/id_rsa.pub"
+        dest: "../buffer/manager_id_rsa.pub"
+        flat: yes

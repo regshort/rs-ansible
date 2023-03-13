@@ -4,7 +4,7 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-    - "../vars/sensitive.yml"
+    - "../vars/sensitive-deploy.yml"
   vars:
     uuid: "{{ 99999999 | random | to_uuid }}"
   # first create a new network to use
@@ -24,8 +24,8 @@
     #   async: 1000
     #   poll: 0
     #   with_dict: "{{ hosts_to_make }}"
-    - name: add old tag to old servers
-      hcloud_server:
+    - name: Add old tag to old servers
+      hetzner.hcloud.hcloud_server:
         id: "{{ item.value.id }}"
         labels:
           todelete: "true"
@@ -33,7 +33,7 @@
       with_items: "{{ hostvars | dict2items }}"
     # rename current boxes to add old- prefix
     - name: Create a basic network
-      hcloud_network:
+      hetzner.hcloud.hcloud_network:
         name: "default"
         ip_range: "{{ hetzner_network_ip_range }}"
         state: present
@@ -41,17 +41,17 @@
       register: network_results
 
     - name: Create a basic subnetwork
-      hcloud_subnetwork:
+      hetzner.hcloud.hcloud_subnetwork:
         network: "{{ network_results.hcloud_network.name }}"
         ip_range: "{{ hetzner_network_ip_subnet }}"
         network_zone: eu-central
         api_token: "{{ hetzner_api_token }}"
         type: cloud
         state: present
-      
+
       # we should be able to create from a list this does not do that really (nested loops)
     - name: Create a basic server with ssh key
-      hcloud_server:
+      hetzner.hcloud.hcloud_server:
         name: "{{ item.key }}-{{ uuid }}"
         server_type: "{{ item.value.server_type }}"
         image: "{{ item.value.image }}"
@@ -66,7 +66,4 @@
       async: 1000
       poll: 0
       with_dict: "{{ hosts_to_make }}"
-
-
-
       # here we could wait for ssh of the server to start before finish. this would make wait-for-ssh.yml useless

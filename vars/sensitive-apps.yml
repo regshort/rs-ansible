@@ -1,0 +1,59 @@
+# ALL OF THESE WILL BE ADDED TO DOCKER SECRETS SO WE CAN USE THEM IN APPS
+# TRAEFIK
+admin_auth_user: admin
+admin_auth_pass: lKEaeS1M4y2NQzep
+
+# DB PASSWD( watch out postgres does not like all chars in pws i think )
+postgres_pass: UMFh4A5opgW6ohCdbBCKDknAxcP1mlUwOjamjARYsE
+
+# restic s3 secrets
+rc_repository: "s3:http://os.securityb.us/backup"
+rc_access_key_id: oGkBIV7XotcKlMFY
+rc_access_key: x6nYKriuGCoI0paLrcvivZ3rzCTqtKsM
+rc_password: only4you
+
+#portainer
+po_pass: CCKPhWymjnRA5eM
+
+# minio login
+mio_user: swarm
+mio_pass: AAKjtAq88jrdNf
+
+#drn io
+drn_github_client_id: 38c0612aed2ae2f9beeb
+drn_github_client_secret: a86bb62d604c2f1cd3ea6098f93f27b3b44d3941
+drn_rpc_secret: ae3bbd5443acd95697a3a54cd6e472b4
+drn_user_create: swarm:lKEaeS1M4y2NQzep,admin:true
+drn_user_filter: regshort
+
+## FRONT SECRETS
+nextauth_secret: e5d03b0e72a0296b8529fdb72af711c09c82681e324ee7945170b98ff7033928
+
+#SENSITIVE-MAILJET
+mailjet_host: in-v3.mailjet.com
+mailjet_port: 587
+mailjet_user: cc56d04cb37df9d93fc52ea7d14887d4
+mailjet_pass: 4adcc50bd5862462e7fa54820f74064d
+mailjet_from_address: "no-reply@regshort.com"
+
+#SENSITIVE-SENDGRID
+sg_host: "smtp.sendgrid.net"
+sg_port: 587
+sg_apikey: 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
+sg_sendfrom: "no-reply@regshort.com"
+
+#SENSITIVE-GIT-auth
+github_id: c3ffa84de318eb377627
+github_secret: 85a2cd18dbed327c81355f39b7c3542395b52f25
+
+#SENSITIVE-GOOGLE-auth
+google_client_id: 975813263327-nj82u6nvccfa5qm8hap6q7r3t7m59bts.apps.googleusercontent.com
+google_client_secret: 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
+
+#SENSITIVE-Discord-auth
+discord_client_id: 1078432155333562378
+discord_client_secret: 3cq13-gIepl0_D1haQj7iSiPmCOpnxNU
+
+#SENSITIVE-Reddit-auth
+reddit_client_id: ctdHfDgCqMkLLqxzVAeJTA
+reddit_client_secret: rbmFCWYj5hUw2r8cenbE6gsQKJdM2g

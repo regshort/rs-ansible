@@ -32,6 +32,8 @@
 - import_playbook: fix-swarm-network.yml
 - import_playbook: update-dns.yml
 
+# TODO: setup docker secrets needed for docker images
+
 - import_playbook: install-postgres-and-dbs.yml
 - import_playbook: install-node-exporter.yml
 - import_playbook: install-redis.yml
@@ -48,7 +50,12 @@
 - import_playbook: setup-grafana.yml
 - import_playbook: setup-loki-driver.yml
 - import_playbook: install-promtail.yml
+
+
 - import_playbook: setup-registry.yml
+- import_playbook: login-registry.yml
+# TODO: build private images on runner and push and deploy on servers
+
 - import_playbook: setup-drone.yml
 - import_playbook: setup-adminer.yml
 # - import_playbook: restart-servers.yml

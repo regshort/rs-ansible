@@ -1,0 +1,9 @@
+---
+- name: Install gluster client
+  hosts: all,!data*
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  become: true
+  roles:
+    - jetune.glusterfs_client

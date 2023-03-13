@@ -1,0 +1,20 @@
+---
+- name: create hetzner volumes
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Loop over volumes
+      hetzner.hcloud.hcloud_volume:
+        name: "{{ item.key }}"
+        size: "{{ item.value.size }}"
+        server: "{{ groups['all'] | select('match', '^' + item.value.server) | map('extract', hostvars, ['name']) | list | first }}"
+        automount: yes
+        format: ext4
+        state: present
+        api_token: "{{ hetzner_api_token }}"
+      with_dict: "{{ volumes_to_make }}"

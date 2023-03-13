@@ -1,0 +1,16 @@
+---
+- name: Login registry
+  hosts: all,!data*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive-apps.yml"
+  remote_user: "{{ unix_user }}"
+
+  tasks:
+  ### we need to add this config to manage
+    - name: Login to Docker registry
+      community.docker.docker_login:
+        registry: registry.sw.frogtech.dev
+        username: "{{ admin_auth_user }}"
+        password: "{{ admin_auth_pass }}"

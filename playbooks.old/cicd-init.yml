@@ -1,0 +1,25 @@
+---
+- name: Init cicd stuff
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+  # we create our images locally when deploying and add them to our registry before deploying this
+  #makes everything simple and lets us deploy without cicd if wanted
+  ## OLD BELOW
+  # here loop over activated drone cicd repos we want auto deployed this is gonna be werid i
+  # did not find a good way so we make api requests to our drone instance
+    - name: Make API request to Drone
+      uri:
+        url: https://drone.sw.frogtech.dev/api/user
+        method: GET
+        headers:
+          Authorization: "Bearer TBrY0DZnJM6TrdZ3nkkOLzBbNG1EGxFA"
+      register: drone_response
+
+  - name: Display response from Drone API
+    debug:
+      var: drone_response.json

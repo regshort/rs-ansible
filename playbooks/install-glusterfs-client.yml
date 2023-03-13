@@ -3,7 +3,7 @@
   hosts: all,!data*
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
   become: true
   roles:
     - jetune.glusterfs_client

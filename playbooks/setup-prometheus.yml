@@ -4,7 +4,7 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
 
   tasks:
   ### we need to add this config to manager
@@ -14,6 +14,7 @@
         data: "{{ lookup('file', '../configs/node_exporter_entrypoint') | b64encode }}"
         data_is_b64: true
         state: present
+
     - name: Rnsures etc/prometheus exists
       ansible.builtin.file:
         path: "/etc/prometheus"
@@ -28,12 +29,12 @@
         mode: '0644'
       become: true
 
-    - name: Copy prometheus stack config
-      ansible.builtin.copy:
-        src: "../apps/prometheus/prometheus-stack.yml"
+    - name: Copy prometheus-stack config
+      ansible.builtin.template:
+        src: "../apps/prometheus/prometheus-stack.yml.j2"
         dest: ~/prometheus-stack.yml
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0644'
 
     - name: Replace node labels with new labels

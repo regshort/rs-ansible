@@ -3,18 +3,21 @@
   hosts: data*
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+    - "../vars/sensitive-deploy.yml"
+    - "../vars/sensitive-apps.yml"
+  remote_user: "{{ unix_user }}"
   become: true
   roles:
     - restic
   vars:
+    restic_install: true
     restic_ssh_enabled: false
-    restic_repository: "s3:https://regshort.fra1.digitaloceanspaces.com/daddy/backup"
-    restic_aws_access_key_id: DO00LDAG98HRGYN47E3X
-    restic_aws_secret_access_key: 9UinsHqscj5gwgsyf53sIk9UaCXX9BbVDnUcN00c6jU
+    restic_repository: "{{ rc_repository }}"
+    restic_aws_access_key_id: "{{ rc_access_key_id }}"
+    restic_aws_secret_access_key: "{{ rc_access_key }}"
     restic_folders:
-      - {path: "/mnt/HC_Volume_*/gluster-storage"}
+      - {path: "/mnt/{{ hc_name }}/{{ gfs_host_name }}"}
     restic_databases:
       - {name: frontdb, dump_command: "sudo -Hiu postgres pg_dump -Fc front"}
       - {name: frontdb, dump_command: sudo -Hiu postgres pg_dump -Fc back}
-    restic_password: mysuperduperpassword
+    restic_password: "{{ rc_password }}"

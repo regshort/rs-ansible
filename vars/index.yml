@@ -2,12 +2,27 @@
 # APP SETTINGS
 git_org: regshort
 app_dir: /git
-username: swarm
+unix_user: swarm
+postgres_user: swarm
+
+#DNS
 root_dns: frogtech.dev
-terminal_subdomain: terminal
-docs_subdomain: docs
-swarm_subdomain: sw
-streamer_subdomain: ws
+terminal_sd: terminal
+docs_sd: docs
+swarm_sd: sw
+streamer_sd: ws
+registry_sd: registry
+drone_sd: drone
+grafana_sd: grafana
+minio_sd: minio
+s3_sd: s3
+
+# gluster share
+hc_name: HC_Volume_data # rename auto mounted to this
+gfs_volume_name: volume-01 # create glusterfs volume with name
+gfs_mount_name: storage-pool # what to name folder that mount this volume
+gfs_host_name: gluster-storage # folder we host in gluster brick
+
 database_to_make: # this will add the username before it {{ username }}{{ db }}
   - front
   - back

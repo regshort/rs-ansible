@@ -4,7 +4,7 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
 
   tasks:
     - name: Download node_exporter

@@ -1,0 +1,68 @@
+---
+- name: Setup promtail
+  hosts: data*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Copy traefik config
+      ansible.builtin.copy:
+        src: "../apps/promtail/promtail-local-config.yaml"
+        dest: /etc/loki/promtail-local-config.yaml
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+      become: true
+
+    - name: Download Promtail zip file
+      ansible.builtin.get_url:
+        url: https://github.com/grafana/loki/releases/download/v2.4.2/promtail-linux-amd64.zip
+        dest: /tmp/promtail-linux-amd64.zip
+        mode: '0744'
+
+    - name: Unzip Promtail zip file
+      ansible.builtin.unarchive:
+        src: /tmp/promtail-linux-amd64.zip
+        dest: /tmp/
+        remote_src: true
+
+    - name: Set executable permissions on Promtail binary
+      ansible.builtin.file:
+        path: /tmp/promtail-linux-amd64
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: a+x
+      become: true
+
+    - name: Move Promtail binary to /usr/local/bin/
+      ansible.builtin.copy:
+        src: /tmp/promtail-linux-amd64
+        dest: /usr/local/bin/promtail
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+        remote_src: true
+      become: true
+
+    - name: Copy local file to /etc/systemd/system/promtail.service
+      ansible.builtin.copy:
+        src: "../configs/promtail.service"
+        dest: /etc/systemd/system/promtail.service
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+      become: true
+
+    - name: Enable promtail.service service
+      ansible.builtin.systemd:
+        name: promtail.service
+        enabled: true
+      become: true
+
+    - name: Start promtail.service service
+      ansible.builtin.systemd:
+        name: promtail.service
+        state: started
+      become: true

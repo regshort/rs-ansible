@@ -19,7 +19,7 @@ entryPoints:
 certificatesResolvers:
   le:
     acme:
-      email: admin@sw.frogtech.dev
+      email: admin@frogtech.dev
       storage: /certificates/acme.json
       tlsChallenge: {}
   

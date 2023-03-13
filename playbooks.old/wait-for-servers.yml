@@ -1,0 +1,16 @@
+---
+- name: Wait for server
+  hosts: all
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: root
+  gather_facts: false
+  tasks:
+    - name: Wait for the reboot and reconnect
+      wait_for:
+        port: 22
+        host: "{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}"
+        search_regex: OpenSSH
+        timeout: 1000
+      connection: local
+

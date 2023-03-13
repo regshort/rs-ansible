@@ -1,0 +1,37 @@
+---
+- name: Setup Portainer
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Rnsures /mnt/storage-pool/portainer exists
+      ansible.builtin.file:
+        path: "/mnt/storage-pool/portainer"
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+      become: true
+
+    - name: Copy portainer stack config
+      ansible.builtin.copy:
+        src: "../apps/portainer/portainer-agent-stack.yml"
+        dest: ~/portainer-agent-stack.yml
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+
+    # - name: Start portainer
+    #   ansible.builtin.command:
+    #     cmd: docker stack deploy -c /home/swarm/portainer-agent-stack.yml portainer
+    #   become: true
+
+    - name: Deploy stack from a compose file
+      community.docker.docker_stack:
+        state: present
+        name: portainer
+        compose:
+          - /home/swarm/portainer-agent-stack.yml

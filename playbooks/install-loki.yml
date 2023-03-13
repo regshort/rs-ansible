@@ -4,7 +4,7 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
 
   tasks:
     - name: Install unzip if not installed
@@ -44,8 +44,8 @@
       ansible.builtin.file:
         path: /etc/loki
         state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0744'
       become: true
 
@@ -54,16 +54,16 @@
         url: https://raw.githubusercontent.com/grafana/loki/master/cmd/loki/loki-local-config.yaml
         dest: /etc/loki/loki-local-config.yaml
         mode: '0744'
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
       become: true
 
     - name: Create directory for loki data storage
       ansible.builtin.file:
         path: /var/lib/loki
         state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0744'
       become: true
 

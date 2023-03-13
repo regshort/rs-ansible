@@ -1,11 +1,11 @@
 ---
-- name: create hetzner volumes
+- name: Create hetzner volumes
   hosts: localhost
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-    - "../vars/sensitive.yml"
-  remote_user: "{{ username }}"
+    - "../vars/sensitive-deploy.yml"
+  remote_user: "{{ unix_user }}"
 
   tasks:
     - name: Loop over volumes
@@ -13,7 +13,7 @@
         name: "{{ item.key }}"
         size: "{{ item.value.size }}"
         server: "{{ groups['all'] | select('match', '^' + item.value.server) | map('extract', hostvars, ['name']) | list | first }}"
-        automount: yes
+        automount: true
         format: ext4
         state: present
         api_token: "{{ hetzner_api_token }}"

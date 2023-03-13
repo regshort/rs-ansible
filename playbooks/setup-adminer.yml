@@ -4,7 +4,7 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
 
   tasks:
   ### we need to add this config to manage
@@ -12,8 +12,8 @@
       ansible.builtin.copy:
         src: "../apps/adminer/adminer-stack.yml"
         dest: ~/adminer-stack.yml
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0644'
 
     - name: Deploy adminer stack from a compose file

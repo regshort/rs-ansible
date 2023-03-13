@@ -11,4 +11,4 @@ sleep 5
 $ansible_cmd playbooks/hetzner_initiate.yml
 # this is the main playbook doing stuff on server
 sleep 20
-$ansible_cmd playbooks/initiate.yml
+$ansible_cmd playbooks/main.yml

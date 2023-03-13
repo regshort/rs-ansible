@@ -4,7 +4,7 @@
   vars_files:
     - "../vars/index.yml"
     - "../vars/glusterfs.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
   become: true
   roles:
     - geerlingguy.glusterfs
@@ -16,11 +16,33 @@
         patterns: HC_Volume_*
       register: found_folders
 
+    - name: Create /mnt/HC_Volume_data directory
+      ansible.builtin.file:
+        path: /mnt/{{ hc_name }}
+        state: directory
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
+        mode: '0744'
+      become: true
+
+
+    - name: Replace mount point path in fstab
+      ansible.builtin.lineinfile:
+        path: /etc/fstab
+        regexp: '^/dev/disk/by-id/scsi-0{{ found_folders.files[0].path | basename }}\s+/mnt/{{ found_folders.files[0].path | basename }}\s+'
+        line: '/dev/disk/by-id/scsi-0{{ found_folders.files[0].path | basename }} /mnt/{{ hc_name }} ext4 discard,nofail,defaults 0 0'
+
+    - name: Test fstab with mount -a command
+      ansible.builtin.command: sudo mount -a
+    # create new folder in mnt
+    # /dev/disk/by-id/scsi-0HC_Volume_29139583 /mnt/HC_Volume_29139583 ext4 discard,nofail,defaults 0 0
+    # edit this file in fstab
+    # remount
     - name: Create gluster volume
       gluster.gluster.gluster_volume:
         state: present
-        name: volume-01
-        bricks: /mnt/{{ found_folders.files[0].path | basename }}/gluster-storage
+        name: "{{ gfs_volume_name }}"
+        bricks: /mnt/{{ hc_name }}/{{ gfs_host_name }}
         start_on_create: true
         force: true
         cluster:

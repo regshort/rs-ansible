@@ -23,8 +23,8 @@ This basically builds a full stack with docker.
       - `1860`: For Node exporter
       - `9628`: For PostgreSQL exporter
     - Loki:
-      - `{swarm_stack="$stack"}` query, log view
-      - define `stack` with Prometheus, query: `label_values(container_last_seen, container_label_com_docker_stack_namespace)`
+      - create new dashboard, add panel, `{swarm_stack="$stack"}` query, log view
+      - define `stack` with Prometheus, query: `label_values(container_last_seen, container_label_com_docker_stack_namespace)` in dashboard settings
       - now you have a log view with drop down
 - Postgres, Redis, s3
 - All on `data` (todo login)
@@ -42,6 +42,7 @@ The Available Disk Space metrics card should indicate N/A because not properly c
   - build (cicd)
 - Deploy as code
   - cicd
+    - build all images on ansible runner first so we can deploy apps
   - grafana
 - Hardening all
 - Backups (not working atm)
@@ -61,6 +62,48 @@ more info [here](https://blog.okami101.io/2022/02/setup-a-docker-swarm-cluster-p
         condition: none
 ```
 
+### app secrets
+
+All secrets we need to deploy fullapp:
+
+- Local Database creds
+- Local registry creds
+- Swarm apps login
+- Linux boxes passwords
+- SSH key (servers)
+- Frontend
+  - Auths
+    - NEXTAUTH
+    - SENDGRID
+    - GITHUB
+    - GOOGLE
+    - DISCORD
+    - REDDIT
+
+## restic
+
+setup-restic.yml has creates a backup service that runs periodically can be redeployed to overwrite settings
+
+the backup location needs `rustic init` ran on it before with the same pw i think not automated
+
+## you need to do this before running.
+
+This project uses `ansible-vault` to encrypt our variables the password is saved in our keychain.
+
+- **setup a project on [hetzner cloud](https://console.hetzner.cloud/projects)**
+
+  - make an api key for the project. (`hetzner_api_token`)
+  - add the ssh key from this repo `ssh/id_rsa.pub` to the project.
+
+- Setup github user access token
+
+  - (needs perms for keys)
+
+- Put the hetzner api key and the github key it into `vars/sensitive.yml#github_access_token`)
+
+because of ansible.cfg you don't need to setup any inventory or ssh keys but make sure your `/etc/ansible/hosts` is empty otherwise it could build on these hosts because this uses `hosts:all` a lot
+
+**OLD README BELOW**
 
 We should probably make `containers` for each repo so we do not need to care about installing repos and only need to do initiation
 

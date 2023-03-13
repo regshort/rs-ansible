@@ -4,7 +4,7 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-    - "../vars/sensitive.yml"
+    - "../vars/sensitive-deploy.yml"
   tasks:
     - name: Ensure the ssh_key is absent (remove if needed)
       hetzner.hcloud.hcloud_ssh_key:

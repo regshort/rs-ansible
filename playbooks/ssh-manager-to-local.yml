@@ -4,7 +4,7 @@
   vars_files:
     - "../vars/index.yml"
   gather_facts: false
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
   tasks:
     - name: Copy keys to runner
       fetch:

@@ -4,24 +4,27 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
 
   tasks:
   ### we need to add this config to manage
+
     - name: Copy registry stack config
-      ansible.builtin.copy:
-        src: "../apps/registry/registry-stack.yml"
+      ansible.builtin.template:
+        src: "../apps/registry/registry-stack.yml.j2"
         dest: ~/registry-stack.yml
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0644'
+      vars:
+        registry_domain: "{{ registry_sd }}.{{ swarm_sd }}.{{ root_dns }}"
 
     - name: Rnsures /mnt/storage-pool/registry exists
       ansible.builtin.file:
         path: "/mnt/storage-pool/registry"
         state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: "0744"
       become: true
 
@@ -30,10 +33,9 @@
         state: present
         name: registry
         compose:
-          - /home/swarm/registry-stack.yml
+          - ~/registry-stack.yml
 
-    - name: Login to Docker registry
-      community.docker.docker_login:
-        registry: registry.sw.frogtech.dev
-        username: admin
-        password: only4you
+    - name: Sleep for 20
+      ansible.builtin.wait_for:
+        timeout: 20
+      delegate_to: localhost

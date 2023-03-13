@@ -1,0 +1,45 @@
+---
+- name: Setup traefik
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive-apps.yml"
+  remote_user: "{{ unix_user }}"
+
+  tasks:
+      # clone for prod envs only dont need the rest really
+    - name: Clone repos
+      ansible.builtin.git:
+        key_file: ~/.ssh/id_rsa
+        repo: git@github.com:regshort/rs-terminal.git
+        dest: ~/rs-terminal
+        version: main
+        accept_hostkey: true
+
+      # if we rename .env.production to .env at the same place we have our compose file it should run with the envs
+    - name: Copy traefik stack config
+      ansible.builtin.copy:
+        src: "../apps/rsterminal/rsterminal-stack.yml"
+        dest: ~/rs-terminal/rsterminal-stack.yml
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
+        mode: '0644'
+
+    - name: Copy rsterminal-stack config
+      ansible.builtin.template:
+        src: "../apps/rsterminal/rsterminal-stack.yml.j2"
+        dest: ~/rs-terminal/rsterminal-stack.yml
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
+        mode: '0644'
+      vars:
+        terminal_domain: "{{ terminal_sd }}.{{ root_dns }}"
+
+    - name: Deploy stack from a compose file
+      community.docker.docker_stack:
+        state: present
+        name: rsterminal
+        compose:
+          - /home/swarm/rs-terminal/rsterminal-stack.yml
+

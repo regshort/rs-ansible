@@ -1,10 +1,12 @@
 ---
-- name: install postgrsql and dbs
+- name: Install postgrsql and dbs
   hosts: data*
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+    - "../vars/sensitive-deploy.yml"
+    - "../vars/sensitive-apps.yml"
+  remote_user: "{{ unix_user }}"
   become: true
   vars:
     postgresql_version: "14"
@@ -32,21 +34,21 @@
     - name: "Create users db"
       community.postgresql.postgresql_db:
         state: present
-        name: "{{ username }}"
+        name: "{{ postgres_user }}"
       become_user: postgres
 
     - name: "Create db user"
       community.postgresql.postgresql_user:
         state: present
-        name: "{{ username }}"
-        password: "{{ username }}"
+        name: "{{ postgres_user }}"
+        password: "{{ postgres_pass }}"
       become_user: postgres
 
     - name: "Grant db user access to app db"
       community.postgresql.postgresql_privs:
         type: database
         database: "{{ item }}"
-        roles: "{{ username }}"
+        roles: "{{ postgres_user }}"
         privs: all
       become_user: postgres
       loop: "{{ database_to_make }}"
@@ -54,18 +56,20 @@
     - name: "Grant db user access to users db"
       community.postgresql.postgresql_privs:
         type: database
-        database: "{{ username }}"
-        roles: "{{ username }}"
+        database: "{{ postgres_user }}"
+        roles: "{{ postgres_user }}"
         privs: all
       become_user: postgres
 
     - name: Configure PostgreSQL. Set listen_addresses.
-      lineinfile:
-        dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
-        regexp="listen_addresses =" line="listen_addresses = '*'" state=present
+      ansible.builtin.lineinfile:
+        dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+        regexp: "listen_addresses ="
+        line: "listen_addresses = '*'"
+        state: present
       become_user: postgres
       notify:
-        - restart postgresql
+        - Restart postgresql
       tags:
         - postgres
 
@@ -73,15 +77,17 @@
       community.postgresql.postgresql_pg_hba:
         dest: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
         contype: host
-        users: "{{ username }}"
+        users: "{{ postgres_user }}"
         source: "{{ hetzner_network_ip_range }}"
         databases: all
         method: md5
         create: true
       become_user: postgres
       notify:
-        - restart postgresql
+        - Restart postgresql
 
   handlers:
-    - name: restart postgresql
-      service: name=postgresql state=restarted
+    - name: Restart postgresql
+      ansible.builtin.service:
+        name: postgresql
+        state: restarted

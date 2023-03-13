@@ -1,0 +1,21 @@
+---
+- name: Initiate Swarm on manager
+  hosts: manager*
+  vars_files:
+    - "../vars/index.yml"
+  vars:
+    manager_priv: "{{ groups['all'] | select('match', '^manager') | map('extract', hostvars, ['private_ipv4']) | list | first }}"
+  remote_user: "{{ username }}"
+
+  tasks:
+    # - name: Init a new swarm with default parameters
+    #   ansible.builtin.command:
+    #     cmd: docker swarm init --advertise-addr {{ manager_priv }}
+    #   become: true
+
+    - name: Init a new swarm with default parameters
+      community.docker.docker_swarm:
+        state: present
+        advertise_addr: "{{ manager_priv }}"
+      environment:
+        shell: /bin/bash

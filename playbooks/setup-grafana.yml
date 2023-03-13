@@ -3,7 +3,7 @@
   hosts: manager*
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
 
   tasks:
   ### we need to add this config to manager
@@ -11,18 +11,26 @@
       ansible.builtin.file:
         path: "/mnt/storage-pool/grafana"
         state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0744'
       become: true
 
-    - name: Copy prometheus stack config
-      ansible.builtin.copy:
-        src: "../apps/grafana/grafana-stack.yml"
+    - name: Copy grafana-stack from template
+      ansible.builtin.template:
+        src: "../apps/grafana/grafana-stack.yml.j2"
         dest: ~/grafana-stack.yml
-        owner: "{{ username }}"
-        group: "{{ username }}"
         mode: '0644'
+      vars:
+        grafana_domain: "{{ grafana_sd }}.{{ swarm_sd }}.{{ root_dns }}"
+
+    # - name: Copy prometheus stack config
+    #   ansible.builtin.copy:
+    #     src: "../apps/grafana/grafana-stack.yml"
+    #     dest: ~/grafana-stack.yml
+    #     owner: "{{ unix_user }}"
+    #     group: "{{ unix_user }}"
+    #     mode: '0644'
 
 
     - name: Deploy stack from a compose file

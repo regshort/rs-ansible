@@ -1,0 +1,72 @@
+---
+- name: Create Network & servers
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+    - "../vars/sensitive.yml"
+  vars:
+    uuid: "{{ 99999999 | random | to_uuid }}"
+  # first create a new network to use
+  # then create all server on that network
+  tasks:
+    # - name: remove network
+    #   hcloud_network:
+    #     name: "default"
+    #     state: absent
+    #     api_token: "{{ hetzner_api_token }}"
+
+    # - name: remove all boxes
+    #   hcloud_server:
+    #     name: "{{ item.key  }}"
+    #     state: absent
+    #     api_token: "{{ hetzner_api_token }}"
+    #   async: 1000
+    #   poll: 0
+    #   with_dict: "{{ hosts_to_make }}"
+    - name: add old tag to old servers
+      hcloud_server:
+        id: "{{ item.value.id }}"
+        labels:
+          todelete: "true"
+      when: not item.key.startswith('rs-controller') # fix to not autodelete rs-controller
+      with_items: "{{ hostvars | dict2items }}"
+    # rename current boxes to add old- prefix
+    - name: Create a basic network
+      hcloud_network:
+        name: "default"
+        ip_range: "{{ hetzner_network_ip_range }}"
+        state: present
+        api_token: "{{ hetzner_api_token }}"
+      register: network_results
+
+    - name: Create a basic subnetwork
+      hcloud_subnetwork:
+        network: "{{ network_results.hcloud_network.name }}"
+        ip_range: "{{ hetzner_network_ip_subnet }}"
+        network_zone: eu-central
+        api_token: "{{ hetzner_api_token }}"
+        type: cloud
+        state: present
+      
+      # we should be able to create from a list this does not do that really (nested loops)
+    - name: Create a basic server with ssh key
+      hcloud_server:
+        name: "{{ item.key }}-{{ uuid }}"
+        server_type: "{{ item.value.server_type }}"
+        image: "{{ item.value.image }}"
+        datacenter: "{{ item.value.location }}"
+        api_token: "{{ hetzner_api_token }}"
+        ssh_keys:
+          - ansible@runner
+        state: present
+        private_networks: ["{{ network_results.hcloud_network.id }}"]
+        labels:
+          running: "true"
+      async: 1000
+      poll: 0
+      with_dict: "{{ hosts_to_make }}"
+
+
+
+      # here we could wait for ssh of the server to start before finish. this would make wait-for-ssh.yml useless

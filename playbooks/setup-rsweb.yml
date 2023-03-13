@@ -4,18 +4,36 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
 
   tasks:
+ 
+    # - name: Clone repos
+    #   ansible.builtin.git:
+    #     key_file: ~/.ssh/id_rsa
+    #     repo: git@github.com:regshort/rs-web.git
+    #     dest: ~/git/rs-web
+    #     version: main
+    #     accept_hostkey: true
 
+
+    # - name: Build an image and push it to a private repo
+    #   community.docker.docker_image:
+    #     build:
+    #       path: ~/git/rs-web/
+    #       dockerfile: Dockerfile.standalone
+    #     name: "{{ registry_sd }}.{{ swarm_sd }}.{{ root_dns }}/rs-web"
+    #     tag: v1
+    #     push: true
+    #     source: build
+  # Build image push to private reg
     - name: Copy traefik stack config
       ansible.builtin.copy:
         src: "../apps/rsweb/rsweb-stack.yml"
         dest: ~/rsweb-stack.yml
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0644'
-
 
     - name: Deploy stack from a compose file
       community.docker.docker_stack:
@@ -23,4 +41,6 @@
         name: rsweb
         compose:
           - /home/swarm/rsweb-stack.yml
+        with_registry_auth: true
+        
 

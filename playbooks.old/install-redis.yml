@@ -1,0 +1,12 @@
+---
+- name: Install redis
+  hosts: data*
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  become: true
+  vars:
+    redis_port: 6379
+    redis_bind_interface: 0.0.0.0
+  roles:
+    - role: geerlingguy.redis

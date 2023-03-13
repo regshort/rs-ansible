@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  drone:
+    image: drone/drone:2
+    volumes:
+      - /etc/hosts:/etc/hosts
+    environment:
+      DRONE_DATABASE_DRIVER: postgres
+      DRONE_DATABASE_DATASOURCE: postgres://{{ postgres_user }}:{{ postgres_pass }}@data-01:5432/drone?sslmode=disable
+      DRONE_GITHUB_CLIENT_ID: /run/secrets/drn_github_client_id
+      DRONE_GITHUB_CLIENT_SECRET: /run/secrets/drn_github_client_secret
+      DRONE_RPC_SECRET: /run/secrets/drn_rpc_secret
+      DRONE_SERVER_HOST: /run/secrets/drone_domain
+      DRONE_SERVER_PROTO: https
+      DRONE_USER_CREATE: /run/secrets/drn_user_create
+      DRONE_USER_FILTER: /run/secrets/drn_user_filter
+    networks:
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.drone.entrypoints=https
+        - traefik.http.services.drone.loadbalancer.server.port=80
+      placement:
+        constraints:
+          - node.role == manager
+    secrets:
+    - postgres_pass
+    - drn_github_client_id
+    - drn_github_client_secret
+    - drn_rpc_secret
+    - drn_user_create
+    - drn_user_filter
+
+  runner-docker:
+    image: drone/drone-runner-docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      DRONE_RPC_SECRET: /run/secrets/drn_rpc_secret
+      DRONE_RPC_HOST: {{ drone_domain }}
+      DRONE_RPC_PROTO: https
+    networks:
+      - traefik_public
+    deploy:
+      placement:
+        constraints:
+          - node.labels.environment == build
+    secrets:
+    - drn_rpc_secret
+
+secrets:
+  postgres_pass:
+    external: true
+  drn_github_client_id:
+    external: true
+  drn_github_client_secret:
+    external: true
+  drn_rpc_secret:
+    external: true
+  drn_user_create:
+    external: true
+  drn_user_filter:
+    external: true
+
+
+networks:
+  traefik_public:
+    external: true

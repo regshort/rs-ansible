@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  app:
+    image: registry.sw.frogtech.dev/rsterminal:latest
+    environment:
+      NEXTAUTH_URL: https://{{ terminal_domain }}
+      NEXTAUTH_SECRET: /run/secret/nextauth_secret
+      MAILJET_HOST: /run/secret/mailjet_host
+      MAILJET_PORT: /run/secret/mailjet_port
+      MAILJET_USER: /run/secret/mailjet_user
+      MAILJET_PASS: /run/secret/mailjet_pass
+      MAILJET_FROM_ADDRESS: /run/secret/mailjet_from_address
+      SG_HOST: /run/secret/sg_host
+      SG_PORT: /run/secret/sg_port
+      SG_APIKEY: /run/secret/sg_apikey
+      SG_SENDFROM: /run/secret/sg_sendfrom
+      GITHUB_ID: /run/secret/github_id
+      GITHUB_SECRET: /run/secret/github_secret
+      GOOGLE_CLIENT_ID: /run/secret/google_client_id
+      GOOGLE_CLIENT_SECRET: /run/secret/google_client_secret
+      DISCORD_CLIENT_ID: /run/secret/discord_client_id
+      DISCORD_CLIENT_SECRET: /run/secret/discord_client_secret
+      REDDIT_CLIENT_ID: /run/secret/reddit_client_id
+      REDDIT_CLIENT_SECRET: /run/secret/reddit_client_secret
+      DATABASE_URL: postgresql://{{ postgres_user }}:{{ postgres_pass }}@data-01:5432/front
+    networks:
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.rsweb.entrypoints=https
+        - traefik.http.services.rsweb.loadbalancer.server.port=3000
+        - traefik.http.routers.rsweb.rule=Host(`terminal.frogtech.dev`)
+      placement:
+        constraints:
+          - node.labels.environment == production
+    secrets:
+      - nextauth_secret
+      - mailjet_host
+      - mailjet_port
+      - mailjet_user
+      - mailjet_pass
+      - mailjet_from_address
+      - sg_host
+      - sg_port
+      - sg_apikey
+      - sg_sendfrom
+      - github_id
+      - github_secret
+      - google_client_id
+      - google_client_secret
+      - discord_client_id
+      - discord_client_secret
+      - reddit_client_id
+      - reddit_client_secret
+      - database_url
+
+secrets:
+  nextauth_secret:
+    external: true
+  mailjet_host:
+    external: true
+  mailjet_port:
+    external: true
+  mailjet_user:
+    external: true
+  mailjet_pass:
+    external: true
+  mailjet_from_address:
+    external: true
+  sg_host:
+    external: true
+  sg_port:
+    external: true
+  sg_apikey:
+    external: true
+  sg_sendfrom:
+    external: true
+  github_id:
+    external: true
+  github_secret:
+    external: true
+  google_client_id:
+    external: true
+  google_client_secret:
+    external: true
+  discord_client_id:
+    external: true
+  discord_client_secret:
+    external: true
+  reddit_client_id:
+    external: true
+  reddit_client_secret:
+    external: true
+  database_url:
+    external: true
+
+networks:
+  traefik_public:
+    external: true

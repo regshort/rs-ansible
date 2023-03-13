@@ -6,7 +6,7 @@
     - "../vars/index.yml"
   vars:
     manager_priv: "{{ groups['all'] | select('match', '^manager') | map('extract', hostvars, ['private_ipv4']) | list | first }}"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
 
   tasks:
     # - name: Get join command

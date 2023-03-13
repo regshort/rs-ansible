@@ -4,15 +4,15 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
 
   tasks:
     - name: Copy traefik config
       ansible.builtin.copy:
         src: "../apps/promtail/promtail-local-config.yaml"
         dest: /etc/loki/promtail-local-config.yaml
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0744'
       become: true
 
@@ -31,8 +31,8 @@
     - name: Set executable permissions on Promtail binary
       ansible.builtin.file:
         path: /tmp/promtail-linux-amd64
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: a+x
       become: true
 
@@ -40,8 +40,8 @@
       ansible.builtin.copy:
         src: /tmp/promtail-linux-amd64
         dest: /usr/local/bin/promtail
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0744'
         remote_src: true
       become: true
@@ -50,8 +50,8 @@
       ansible.builtin.copy:
         src: "../configs/promtail.service"
         dest: /etc/systemd/system/promtail.service
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0744'
       become: true
 

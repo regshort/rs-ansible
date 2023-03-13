@@ -4,19 +4,29 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+    - "../vars/sensitive-apps.yml"
+  remote_user: "{{ unix_user }}"
 
   tasks:
   ### we need to add this config to manager
 
-    - name: Copy drone stack config
-      ansible.builtin.copy:
-        src: "../apps/drone/drone-stack.yml"
-        dest: ~/drone-stack.yml
-        owner: "{{ username }}"
-        group: "{{ username }}"
-        mode: '0644'
+    # - name: Copy drone stack config
+    #   ansible.builtin.copy:
+    #     src: "../apps/drone/drone-stack.yml"
+    #     dest: ~/drone-stack.yml
+    #     owner: "{{ unix_user }}"
+    #     group: "{{ unix_user }}"
+    #     mode: '0644'
 
+    - name: Copy drone-stack config
+      ansible.builtin.template:
+        src: "../apps/drone/drone-stack.yml.j2"
+        dest: ~/drone-stack.yml
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
+        mode: '0644'
+      vars:
+        drone_domain: "{{ drone_sd }}.{{ swarm_sd }}.{{ root_dns }}"
 
     - name: Deploy stack from a compose file
       community.docker.docker_stack:

@@ -7,10 +7,6 @@ services:
       - /mnt/storage-pool/minio:/data
     command: server /data --console-address ":9001"
     environment:
-      # MINIO_USERNAME: swarm
-      # MINIO_GROUPNAME: swarm
-      # MINIO_UID: 1000
-      # MINIO_GID: 1000
       MINIO_ROOT_USER: swarm
       MINIO_ROOT_PASSWORD: only4you
       MINIO_BROWSER_REDIRECT_URL: https://minio.sw.frogtech.dev

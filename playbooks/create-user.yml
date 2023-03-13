@@ -1,33 +1,33 @@
 ---
-- name: Create user {{ username }}
+- name: Create user {{ unix_user }}
   hosts: all
   gather_facts: false
   remote_user: root
   vars_files:
     - "../vars/index.yml"
-    - "../vars/sensitive.yml"
+    - "../vars/sensitive-deploy.yml"
 
   vars:
-    new_password: "{{ username }}-{{ inventory_hostname.split('-')[:2] | join('-') }}{{ password_seed }}"
+    new_password: "{{ unix_user }}-{{ inventory_hostname.split('-')[:2] | join('-') }}{{ seed_pass }}"
   strategy: free
 
   tasks:
     - name: Creating user with admin access
       ansible.builtin.user:
-        name: "{{ username }}"
+        name: "{{ unix_user }}"
         password: "{{ new_password | password_hash('sha512') }}"
         shell: /bin/bash
 
     - name: Add user to docker group
       ansible.builtin.user:
-        name: "{{ username }}"
+        name: "{{ unix_user }}"
         groups: sudo
         append: true
         
     - name: Add user to docker group
       lineinfile:
-        path: /etc/sudoers.d/{{ username }}
-        line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
+        path: /etc/sudoers.d/{{ unix_user }}
+        line: "{{ unix_user }} ALL=(ALL) NOPASSWD: ALL"
         state: present
         create: true
         mode: 0440

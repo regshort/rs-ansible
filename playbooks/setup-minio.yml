@@ -4,7 +4,9 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+    - "../vars/sensitive-apps.yml"
+
+  remote_user: "{{ unix_user }}"
 
   tasks:
 
@@ -12,17 +14,29 @@
       ansible.builtin.file:
         path: /mnt/storage-pool/minio
         state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0744'
       become: true
+
+
+    - name: Copy minio stack config
+      ansible.builtin.template:
+        src: "../apps/minio/minio-stack.yml.j2"
+        dest: ~/minio-stack.yml
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
+        mode: '0644'
+      vars:
+        minio_domain: "{{ minio_sd }}.{{ swarm_sd }}.{{ root_dns }}"
+        s3_domain: "{{ s3_sd }}.{{ swarm_sd }}.{{ root_dns }}"
 
     - name: Copy minio stack config
       ansible.builtin.copy:
         src: "../apps/minio/minio-stack.yml"
         dest: ~/minio-stack.yml
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0744'
 
     - name: Deploy maintenance stack from a compose file

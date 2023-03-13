@@ -1,0 +1,19 @@
+---
+- name: clone repos
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+  strategy: free
+
+  tasks:
+    - name: Clone repos
+      ansible.builtin.git:
+        key_file: ~/.ssh/id_rsa
+        repo: git@github.com:{{ git_org }}/{{ item }}.git
+        dest: /git/{{ item }}
+        version: main
+        accept_hostkey: true
+      become: false
+      loop: "{{ hosts_to_make[inventory_hostname | regex_replace('^([^-]+-[^-]+).*', '\\1')].repos }}"

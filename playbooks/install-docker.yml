@@ -4,8 +4,9 @@
   vars_files:
     - "../vars/index.yml"
     - "../vars/docker.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
   become: true
+  strategy: free
   roles:
     - geerlingguy.docker
     - gantsign.ctop
@@ -26,7 +27,7 @@
 
     - name: Add user to docker group
       ansible.builtin.user:
-        name: "{{ username }}"
+        name: "{{ unix_user }}"
         groups: docker
       become: true
 

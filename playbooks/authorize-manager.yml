@@ -4,12 +4,12 @@
   vars_files:
     - "../vars/index.yml"
   gather_facts: false
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
 
   tasks:
     - name: Copy SSh Key | copying ssh key to remote host
       ansible.posix.authorized_key:
-        user: "{{ username }}"
+        user: "{{ unix_user }}"
         state: present
         key: "{{ lookup('file', item) }}"
       with_fileglob:

@@ -63,8 +63,8 @@ services:
   postgres-exporter:
     image: quay.io/prometheuscommunity/postgres-exporter
     environment:
-      DATA_SOURCE_URI: data-01:5432/postgres?sslmode=disable
-      DATA_SOURCE_USER: swarm
+      DATA_SOURCE_URI: data-01:5432/swarm?sslmode=disable
+      DATA_SOURCE_USER: 
       DATA_SOURCE_PASS: swarm
     networks:
       - private

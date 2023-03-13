@@ -1,0 +1,65 @@
+---
+# check/wait for servers to be online
+# INITIATED
+# hosts: all
+- import_playbook: wait-for-servers.yml
+
+- import_playbook: change-default-sshport.yml
+- import_playbook: hetzner-create-volume.yml
+- import_playbook: change-root-password.yml # creates pw from vars with its hostname
+- import_playbook: change-hostname.yml # change hostname
+- import_playbook: create-user.yml # create new user from vars with password build from vars
+- import_playbook: ssh-to-box.yml # copy the ssh key to the new user so we can connect to it
+
+# setup iptables
+# - import_playbook: setup-iptables-log.yml
+# - import_playbook: iptables-web.yml
+# - import_playbook: iptables-dba.yml
+# - import_playbook: iptables-str.yml
+- import_playbook: update-ubuntu.yml # as filename
+- import_playbook: create-hosts-entries.yml
+- import_playbook: create-ssh.yml
+- import_playbook: ssh-manager-to-local.yml
+- import_playbook: authorize-manager.yml
+
+# GLUSTERFS
+- import_playbook: install-glusterfs-server.yml
+- import_playbook: install-glusterfs-client.yml
+- import_playbook: setup-glusterfs-client.yml
+
+# DOCKER
+- import_playbook: install-docker.yml
+- import_playbook: initiate-swarm.yml
+- import_playbook: join-swarm.yml
+- import_playbook: join-swarm-runner.yml
+- import_playbook: fix-swarm-network.yml
+- import_playbook: setup-docker-secrets.yml # TODO: setup docker secrets needed for docker images
+
+#DNS
+- import_playbook: update-dns.yml
+
+# BINARY INSTALLS
+- import_playbook: install-postgres-and-dbs.yml
+- import_playbook: install-node-exporter.yml
+- import_playbook: install-redis.yml
+# - import_playbook: install-loki.yml
+# - import_playbook: install-promtail.yml
+
+# SETUP BINARY
+- import_playbook: setup-restic.yml
+# - import_playbook: setup-loki-driver.yml
+
+# SETUP STACK
+- import_playbook: setup-traefik.yml
+
+- import_playbook: setup-portainer.yml
+- import_playbook: setup-maintenance.yml
+- import_playbook: setup-minio.yml
+- import_playbook: setup-prometheus.yml
+- import_playbook: setup-grafana.yml
+- import_playbook: setup-drone.yml
+- import_playbook: setup-adminer.yml
+
+# REGISTRY (needs to be after traefik because of network FIXME)
+- import_playbook: setup-registry.yml
+- import_playbook: login-registry.yml

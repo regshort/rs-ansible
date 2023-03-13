@@ -1,5 +1,5 @@
 ---
-### START SENSITIVE DATA ###
+### START SENSITIVE DATA THIS DATA IS ONLY NEEDED FOR DEPLOYMENT ###
 # API KEYS
 hetzner_api_token: YuHY1KQOCeC52LKc5Swr7YhImiUlgvPK4iJqKN75T2HH3T0o36QzOiQWhOGaPSRr
 
@@ -7,5 +7,5 @@ hetzner_api_token: YuHY1KQOCeC52LKc5Swr7YhImiUlgvPK4iJqKN75T2HH3T0o36QzOiQWhOGaP
 github_access_token: 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
 cloudflare_api_token: hWWw5HR_ybV1FWr1tL0UfHOHWFKLIkaduK9Il7jX
 
-# PASSWORD
-password_seed: 4BouldaFiggtMueter$
+# UNIX PASSWORD
+seed_pass: 4BouldaFiggtMueter$

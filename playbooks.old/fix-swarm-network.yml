@@ -1,0 +1,40 @@
+---
+- name: Fix ingress network mtu
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Remove ingress network
+      ansible.builtin.expect:
+        command: docker network rm ingress
+        responses:
+          (?i)are you sure you want to continue?: y
+      become: true
+
+    - name: Remove a network
+      community.docker.docker_network:
+        name: ingress
+        state: absent
+        force: true
+
+    - name: Remove a network
+      community.docker.docker_network:
+        name: ingress
+        state: present
+        force: true
+
+    - name: Re add ingress network
+      docker_network:
+        name: ingress
+        driver: overlay
+        driver_options:
+          com.docker.network.driver.mtu: 1450
+        state: present
+        
+    # - name: Re add ingress network
+    #   ansible.builtin.command:
+    #     cmd: docker network create -d overlay --ingress --opt com.docker.network.driver.mtu=1450 ingress
+    #   become: true

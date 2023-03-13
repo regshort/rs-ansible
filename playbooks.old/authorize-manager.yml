@@ -1,0 +1,16 @@
+---
+- name: Copying ssh key from dba to runner then to str
+  hosts: all,!manager*
+  vars_files:
+    - "../vars/index.yml"
+  gather_facts: false
+  remote_user: "{{ username }}"
+
+  tasks:
+    - name: Copy SSh Key | copying ssh key to remote host
+      ansible.posix.authorized_key:
+        user: "{{ username }}"
+        state: present
+        key: "{{ lookup('file', item) }}"
+      with_fileglob:
+        - "../buffer/manager_id_rsa.pub"

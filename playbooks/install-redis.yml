@@ -3,7 +3,7 @@
   hosts: data*
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
   become: true
   vars:
     redis_port: 6379

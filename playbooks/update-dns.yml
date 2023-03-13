@@ -4,15 +4,34 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-    - "../vars/sensitive.yml"
+    - "../vars/sensitive-deploy.yml"
   vars:
     manager_pub: "{{ groups['all'] | select('match', '^manager') | map('extract', hostvars, ['ansible_host']) | list | first }}"
   tasks:
-
-    - name: Create dns for sw.{{ root_dns }}
+    - name: Create dns for {{ root_dns }}
       community.general.cloudflare_dns:
         zone: "{{ root_dns }}"
-        record: "{{ swarm_subdomain }}"
+        record: "{{ root_dns }}"
+        type: A
+        value: "{{ manager_pub }}"
+        api_token: "{{ cloudflare_api_token }}"
+        solo: true
+        proxied: false
+
+    - name: Create dns for {{ terminal_sd }}
+      community.general.cloudflare_dns:
+        zone: "{{ root_dns }}"
+        record: "{{ terminal_sd }}"
+        type: A
+        value: "{{ manager_pub }}"
+        api_token: "{{ cloudflare_api_token }}"
+        solo: true
+        proxied: false
+
+    - name: Create dns for {{ swarm_sd }}
+      community.general.cloudflare_dns:
+        zone: "{{ root_dns }}"
+        record: "{{ swarm_sd }}"
         type: A
         value: "{{ manager_pub }}"
         api_token: "{{ cloudflare_api_token }}"
@@ -22,9 +41,9 @@
     - name: Create dns for *sw.{{ root_dns }}
       community.general.cloudflare_dns:
         zone: "{{ root_dns }}"
-        record: "*.sw"
+        record: "*.{{ swarm_sd }}"
         type: CNAME
-        value: "{{ swarm_subdomain }}.{{ root_dns }}"
+        value: "{{ swarm_sd }}.{{ root_dns }}"
         api_token: "{{ cloudflare_api_token }}"
         solo: true
         proxied: false

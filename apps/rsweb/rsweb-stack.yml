@@ -2,14 +2,15 @@ version: '3.8'
 
 services:
   app:
-    image: registry.sw.frogtech.dev/rsweb
+    image: registry.sw.frogtech.dev/rs-web
     networks:
       - traefik_public
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.routers.my-weather-api.entrypoints=https
-        - traefik.http.services.my-weather-api.loadbalancer.server.port=3000
+        - traefik.http.routers.rsweb.entrypoints=https
+        - traefik.http.services.rsweb.loadbalancer.server.port=3000
+        - traefik.http.routers.rsweb.rule=Host(`frogtech.dev`)
       placement:
         constraints:
           - node.labels.environment == production

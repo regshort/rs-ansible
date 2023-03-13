@@ -1,0 +1,26 @@
+---
+- name: Setup traefik
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+
+    - name: Copy traefik stack config
+      ansible.builtin.copy:
+        src: "../apps/rsweb/rsweb-stack.yml"
+        dest: ~/rsweb-stack.yml
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0644'
+
+
+    - name: Deploy stack from a compose file
+      community.docker.docker_stack:
+        state: present
+        name: rsweb
+        compose:
+          - /home/swarm/rsweb-stack.yml
+

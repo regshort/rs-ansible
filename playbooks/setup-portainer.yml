@@ -4,15 +4,16 @@
   gather_facts: false
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+    - "../vars/sensitive-apps.yml"
+  remote_user: "{{ unix_user }}"
 
   tasks:
     - name: Rnsures /mnt/storage-pool/portainer exists
       ansible.builtin.file:
         path: "/mnt/storage-pool/portainer"
         state: directory
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0744'
       become: true
 
@@ -20,8 +21,8 @@
       ansible.builtin.copy:
         src: "../apps/portainer/portainer-agent-stack.yml"
         dest: ~/portainer-agent-stack.yml
-        owner: "{{ username }}"
-        group: "{{ username }}"
+        owner: "{{ unix_user }}"
+        group: "{{ unix_user }}"
         mode: '0744'
 
     # - name: Start portainer
@@ -35,3 +36,4 @@
         name: portainer
         compose:
           - /home/swarm/portainer-agent-stack.yml
+

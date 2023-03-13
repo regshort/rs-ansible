@@ -1,0 +1,33 @@
+---
+- name: Setup minio
+  hosts: manager*
+  gather_facts: false
+  vars_files:
+    - "../vars/index.yml"
+  remote_user: "{{ username }}"
+
+  tasks:
+
+    - name: Create /mnt/storage-pool/minio directory
+      ansible.builtin.file:
+        path: /mnt/storage-pool/minio
+        state: directory
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+      become: true
+
+    - name: Copy minio stack config
+      ansible.builtin.copy:
+        src: "../apps/minio/minio-stack.yml"
+        dest: ~/minio-stack.yml
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0744'
+
+    - name: Deploy maintenance stack from a compose file
+      community.docker.docker_stack:
+        state: present
+        name: minio
+        compose:
+          - /home/swarm/minio-stack.yml

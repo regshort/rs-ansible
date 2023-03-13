@@ -5,7 +5,7 @@
   become: true
   vars_files:
     - "../vars/index.yml"
-  remote_user: "{{ username }}"
+  remote_user: "{{ unix_user }}"
   become_user: root
   strategy: free
   tasks:

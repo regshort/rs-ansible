@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    image: quay.io/minio/minio:latest
+    volumes:
+      - /mnt/storage-pool/minio:/data
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: /run/secrets/mio_user
+      MINIO_ROOT_PASSWORD: /run/secrets/mio_pass
+      MINIO_BROWSER_REDIRECT_URL: https://{{ minio_domain }}
+    networks:
+      - traefik_public
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.minio.entrypoints=https
+        - traefik.http.routers.minio.rule=Host(`{{ s3_domain }}`)
+        - traefik.http.routers.minio.service=minio
+        - traefik.http.routers.minio-console.entrypoints=https
+        - traefik.http.services.minio.loadbalancer.server.port=9000
+        - traefik.http.routers.minio-console.service=minio-console
+        - traefik.http.services.minio-console.loadbalancer.server.port=9001
+      placement:
+        constraints:
+          - node.labels.environment == production
+    secrets:
+      - mio_user
+      - mio_pass
+      
+secrets:
+  mio_user:
+    external: true
+  mio_pass:
+    external: true
+
+networks:
+  traefik_public:
+    external: true
